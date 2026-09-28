@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FINAI — AI-Powered Loan Eligibility & Financial Platform</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .landing-nav {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4rem;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: var(--glass-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .landing-hero {
+      padding: 5rem 4rem 4rem;
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 3.5rem;
+      align-items: center;
+    }
+    .hero-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: var(--radius-full);
+      background: var(--indigo-light);
+      color: var(--secondary-indigo);
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(99, 91, 255, 0.2);
+    }
+    .features-section {
+      padding: 5rem 4rem;
+      background: #FFFFFF;
+      border-top: 1px solid var(--navy-200);
+      border-bottom: 1px solid var(--navy-200);
+    }
+    .features-grid {
+      max-width: 1200px;
+      margin: 3rem auto 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+    }
+    .feature-box {
+      padding: 2rem;
+      border-radius: var(--radius-xl);
+      background: var(--bg-main);
+      border: 1px solid var(--navy-200);
+      transition: all var(--transition-normal);
+    }
+    .feature-box:hover {
+      transform: translateY(-4px);
+      border-color: var(--secondary-indigo);
+      box-shadow: var(--glass-shadow-lg);
+    }
+    @media (max-width: 900px) {
+      .landing-nav { padding: 0 1.5rem; }
+      .landing-hero { grid-template-columns: 1fr; padding: 3rem 1.5rem; }
+      .features-section { padding: 3rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Header -->
+  <header class="landing-nav">
+    <div class="brand-logo" style="color:var(--primary-navy);">
+      <div class="brand-icon">
+        <i data-lucide="shield-check" style="width:22px;height:22px;"></i>
+      </div>
+      <span>FIN<span style="color:var(--secondary-indigo);">AI</span></span>
+      <span class="brand-badge">BFSI AI</span>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:1.5rem;">
+      <a href="dashboard.html" class="btn btn-outline btn-sm">Direct App Access</a>
+      <button class="btn btn-primary btn-sm" onclick="openAuthModal('login')">
+        <i data-lucide="log-in" style="width:15px;height:15px;"></i> Sign In
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main>
+    <section class="landing-hero">
+      <div>
+        <div class="hero-badge-pill animate-fade-in">
+          <i data-lucide="sparkles" style="width:16px;height:16px;"></i>
+          Powered by Claude AI & BFSI Decision Intelligence
+        </div>
+        <h1 style="font-size:3.2rem;line-height:1.15;margin-bottom:1.5rem;">
+          Smart Lending & Loan Eligibility <span style="background:linear-gradient(135deg,var(--secondary-indigo),var(--accent-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Assisted by AI</span>
+        </h1>
+        <p style="font-size:1.15rem;color:var(--navy-600);margin-bottom:2.25rem;line-height:1.6;">
+          Evaluate indicative loan eligibility, simulate real-time monthly EMIs with dynamic amortization schedules, inspect your credit score profile, and consult an intelligent BFSI financial assistant.
+        </p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <a href="eligibility.html" class="btn btn-primary btn-lg">
+            <i data-lucide="check-circle-2"></i> Check Loan Eligibility
+          </a>
+          <a href="emi-calculator.html" class="btn btn-secondary btn-lg">
+            <i data-lucide="calculator"></i> Calculate EMI
+          </a>
+          <button class="btn btn-cyan btn-lg" onclick="demoLoginQuick()">
+            <i data-lucide="zap"></i> Launch Demo
+          </button>
+        </div>
+        <div style="display:flex;align-items:center;gap:1.5rem;margin-top:2.5rem;font-size:0.85rem;color:var(--navy-500);">
+          <div style="display:flex;align-items:center;gap:0.4rem;">
+            <i data-lucide="check" style="color:var(--color-success);width:16px;height:16px;"></i> No Bank Login Required
+          </div>
+          <div style="display:flex;align-items:center;gap:0.4rem;">
+            <i data-lucide="check" style="color:var(--color-success);width:16px;height:16px;"></i> Instant Indicative Results
+          </div>
+          <div style="display:flex;align-items:center;gap:0.4rem;">
+            <i data-lucide="check" style="color:var(--color-success);width:16px;height:16px;"></i> Google Sheets Integration
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual Card -->
+      <div class="glass-card animate-fade-in" style="background:#FFFFFF;border:1px solid rgba(99,91,255,0.2);box-shadow:0 20px 50px -10px rgba(99,91,255,0.18);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <div class="user-avatar" style="width:42px;height:42px;">RS</div>
+            <div>
+              <div class="font-bold">Rahul Sharma</div>
+              <div class="text-xs text-muted">Salaried Professional • CIBIL 780</div>
+            </div>
+          </div>
+          <span class="badge badge-success">Highly Eligible</span>
+        </div>
+
+        <div style="background:var(--navy-50);padding:1.25rem;border-radius:var(--radius-lg);margin-bottom:1.25rem;">
+          <div class="text-xs text-muted">Indicative Eligible Limit</div>
+          <div style="font-size:2.2rem;font-weight:800;color:var(--color-success);line-height:1.2;margin:0.25rem 0;">₹15,00,000</div>
+          <div class="text-xs text-muted">Formula: ₹75,000 Monthly Salary × 20</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:0.75rem;margin-bottom:1.5rem;">
+          <div style="border:1px solid var(--navy-200);padding:0.75rem;border-radius:var(--radius-md);">
+            <div class="text-xs text-muted">Estimated EMI</div>
+            <div class="font-bold text-md">₹32,238 / mo</div>
+          </div>
+          <div style="border:1px solid var(--navy-200);padding:0.75rem;border-radius:var(--radius-md);">
+            <div class="text-xs text-muted">Debt-to-Income</div>
+            <div class="font-bold text-md" style="color:var(--secondary-indigo);">16% (Safe)</div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:0.75rem;padding:0.85rem;background:var(--indigo-light);border-radius:var(--radius-md);color:var(--secondary-indigo);font-size:0.85rem;">
+          <i data-lucide="bot" style="width:20px;height:20px;flex-shrink:0;"></i>
+          <span><strong>AI Insight:</strong> You qualify for preferred prime lending interest rates (10.25% - 11.5% p.a.).</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Platform Features -->
+    <section class="features-section">
+      <div style="text-align:center;max-width:680px;margin:0 auto;">
+        <span class="badge badge-indigo" style="margin-bottom:0.75rem;">BFSI Platform Modules</span>
+        <h2 style="font-size:2.3rem;">Complete Suite of Intelligent Lending Tools</h2>
+        <p style="color:var(--navy-600);margin-top:0.75rem;">
+          Built for modern borrowers and financial institutions to streamline pre-qualification and financial planning.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-box">
+          <div class="stat-icon indigo" style="margin-bottom:1.25rem;"><i data-lucide="check-square"></i></div>
+          <h3 style="margin-bottom:0.5rem;">Loan Eligibility Checker</h3>
+          <p class="text-sm">Configurable BFSI underwriting rules evaluating salary, FOIR, credit score, and age criteria with personalized improvement tips.</p>
+          <a href="eligibility.html" style="display:inline-flex;align-items:center;gap:0.3rem;margin-top:1rem;font-weight:600;font-size:0.85rem;">
+            Test Eligibility <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+          </a>
+        </div>
+
+        <div class="feature-box">
+          <div class="stat-icon cyan" style="margin-bottom:1.25rem;"><i data-lucide="calculator"></i></div>
+          <h3 style="margin-bottom:0.5rem;">Dynamic EMI Calculator</h3>
+          <p class="text-sm">Calculates monthly installments, total interest, principal-to-interest ratios, interactive charts, and complete amortizations.</p>
+          <a href="emi-calculator.html" style="display:inline-flex;align-items:center;gap:0.3rem;margin-top:1rem;font-weight:600;font-size:0.85rem;">
+            Calculate EMI <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+          </a>
+        </div>
+
+        <div class="feature-box">
+          <div class="stat-icon green" style="margin-bottom:1.25rem;"><i data-lucide="gauge"></i></div>
+          <h3 style="margin-bottom:0.5rem;">Credit Score Analyzer</h3>
+          <p class="text-sm">Detailed 300-900 rating gauge, credit utilization inspection, active debt mix, and practical strategies for score improvement.</p>
+          <a href="credit-analyzer.html" style="display:inline-flex;align-items:center;gap:0.3rem;margin-top:1rem;font-weight:600;font-size:0.85rem;">
+            Analyze Score <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+          </a>
+        </div>
+
+        <div class="feature-box">
+          <div class="stat-icon amber" style="margin-bottom:1.25rem;"><i data-lucide="bot"></i></div>
+          <h3 style="margin-bottom:0.5rem;">Claude AI Assistant</h3>
+          <p class="text-sm">Direct advisory integration with Anthropic Claude to explain BFSI terminology, assess session context, and guide loan decisions.</p>
+          <a href="ai-assistant.html" style="display:inline-flex;align-items:center;gap:0.3rem;margin-top:1rem;font-weight:600;font-size:0.85rem;">
+            Chat with AI <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer style="padding:2.5rem 4rem;background:#101828;color:#98A2B3;font-size:0.85rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+    <div>
+      <span style="font-weight:700;color:#FFFFFF;font-size:1.1rem;">FINAI</span> — AI Loan Eligibility Checker & Financial Decision System
+    </div>
+    <div>
+      Educational & Indicative BFSI Financial Simulator • Made with HTML5, CSS3, ES6 & Node.js
+    </div>
+  </footer>
+
+  <!-- Auth Modal -->
+  <div id="authModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="authModalTitle">Sign In to FINAI</h3>
+        <button class="btn btn-secondary btn-icon" onclick="closeAuthModal()">
+          <i data-lucide="x" style="width:18px;height:18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="auth-form">
+          <div class="form-group" id="group-fullName" style="display:none;">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="auth-fullName" class="form-control" placeholder="e.g. Rahul Sharma">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="auth-email" class="form-control" placeholder="user@example.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="auth-password" class="form-control" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-full" id="auth-submit-btn" style="margin-top:1rem;">
+            Sign In
+          </button>
+        </form>
+
+        <div style="text-align:center;margin:1.25rem 0 0.5rem;">
+          <span class="text-sm text-muted" id="auth-toggle-msg">Don't have an account?</span>
+          <button type="button" class="btn btn-outline btn-sm" id="auth-toggle-btn" onclick="toggleAuthMode()" style="margin-left:0.5rem;">
+            Create Account
+          </button>
+        </div>
+
+        <div style="border-top:1px solid var(--navy-200);margin-top:1.5rem;padding-top:1.25rem;text-align:center;">
+          <button type="button" class="btn btn-cyan w-full" onclick="demoLoginQuick()">
+            <i data-lucide="zap"></i> Continue as Demo User (Instant)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    let authMode = 'login'; // 'login' or 'register'
+
+    function openAuthModal(mode = 'login') {
+      authMode = mode;
+      updateAuthModalUI();
+      document.getElementById('authModal').classList.add('active');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.remove('active');
+    }
+
+    function toggleAuthMode() {
+      authMode = authMode === 'login' ? 'register' : 'login';
+      updateAuthModalUI();
+    }
+
+    function updateAuthModalUI() {
+      const isRegister = authMode === 'register';
+      document.getElementById('authModalTitle').textContent = isRegister ? 'Create FINAI Account' : 'Sign In to FINAI';
+      document.getElementById('group-fullName').style.display = isRegister ? 'block' : 'none';
+      document.getElementById('auth-submit-btn').textContent = isRegister ? 'Create Account' : 'Sign In';
+      document.getElementById('auth-toggle-msg').textContent = isRegister ? 'Already have an account?' : "Don't have an account?";
+      document.getElementById('auth-toggle-btn').textContent = isRegister ? 'Sign In' : 'Create Account';
+    }
+
+    async function demoLoginQuick() {
+      try {
+        const res = await apiRequest(CONFIG.ENDPOINTS.AUTH_DEMO, { method: 'POST' });
+        setCurrentUser(res.user, res.token);
+        showToast('Signed in as Demo User!', 'success');
+        setTimeout(() => window.location.href = 'dashboard.html', 500);
+      } catch (err) {
+        showToast('Demo login notice: Proceeding to dashboard.', 'info');
+        setTimeout(() => window.location.href = 'dashboard.html', 400);
+      }
+    }
+
+    document.getElementById('auth-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value;
+      const password = document.getElementById('auth-password').value;
+      const fullName = document.getElementById('auth-fullName').value;
+
+      const endpoint = authMode === 'register' ? CONFIG.ENDPOINTS.AUTH_REGISTER : CONFIG.ENDPOINTS.AUTH_LOGIN;
+      const payload = authMode === 'register' ? { fullName, email, password } : { email, password };
+
+      try {
+        const res = await apiRequest(endpoint, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        setCurrentUser(res.user, res.token);
+        showToast(res.message || 'Authenticated successfully!', 'success');
+        closeAuthModal();
+        setTimeout(() => window.location.href = 'dashboard.html', 500);
+      } catch (err) {
+        showToast(err.message || 'Authentication failed.', 'error');
+      }
+    });
+  </script>
+</body>
+</html>

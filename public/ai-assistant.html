@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Financial Assistant — FINAI</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-logo">
+          <div class="brand-icon">
+            <i data-lucide="shield-check" style="width:20px;height:20px;"></i>
+          </div>
+          <span>FIN<span style="color:var(--secondary-indigo);">AI</span></span>
+        </a>
+        <span class="brand-badge">BFSI</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Modules</div>
+        <a href="dashboard.html" class="nav-link">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="eligibility.html" class="nav-link">
+          <i data-lucide="check-circle-2"></i>
+          <span>Loan Eligibility</span>
+        </a>
+        <a href="emi-calculator.html" class="nav-link">
+          <i data-lucide="calculator"></i>
+          <span>EMI Calculator</span>
+        </a>
+        <a href="credit-analyzer.html" class="nav-link">
+          <i data-lucide="gauge"></i>
+          <span>Credit Analyzer</span>
+        </a>
+        <a href="ai-assistant.html" class="nav-link active">
+          <i data-lucide="bot"></i>
+          <span>AI Assistant</span>
+        </a>
+        <a href="history.html" class="nav-link">
+          <i data-lucide="history"></i>
+          <span>Application History</span>
+        </a>
+
+        <div class="nav-section-title" style="margin-top:1rem;">Settings & System</div>
+        <a href="settings.html" class="nav-link">
+          <i data-lucide="settings"></i>
+          <span>Settings & Config</span>
+        </a>
+        <a href="index.html" class="nav-link">
+          <i data-lucide="external-link"></i>
+          <span>Landing Page</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status-box">
+          <div style="display:flex;align-items:center;margin-bottom:0.35rem;">
+            <span class="status-dot"></span>
+            <span class="font-semibold text-xs" style="color:#FFF;">System Online</span>
+          </div>
+          <div class="text-xs text-muted" id="status-ai-indicator">Checking AI Engine...</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">
+            <i data-lucide="menu" style="width:22px;height:22px;"></i>
+          </button>
+          <div class="breadcrumb-trail">
+            <a href="dashboard.html" style="color:inherit;">Portal</a>
+            <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+            <span class="current">AI Financial Assistant</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="topbar-actions">
+            <span id="ai-engine-badge" class="badge badge-neutral">Checking AI Engine...</span>
+          </div>
+
+          <div class="user-profile-pill" onclick="window.location.href='settings.html'">
+            <div class="user-avatar" id="user-display-avatar">RS</div>
+            <div>
+              <div class="user-meta-name" id="user-display-name">Rahul Sharma</div>
+              <div class="user-meta-role">Fintech User</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+          <div>
+            <h1>AI Financial Assistant</h1>
+            <p style="margin-top:0.25rem;">
+              Personalized lending insights, EMI guidance, credit score advice, and BFSI advisory powered by Anthropic Claude.
+            </p>
+          </div>
+
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-clear-chat">
+            <i data-lucide="trash-2" style="width:14px;height:14px;"></i> Clear Chat
+          </button>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="chat-container">
+          <!-- Chat Header -->
+          <div class="chat-header">
+            <div class="chat-header-brand">
+              <div class="brand-icon" style="width:34px;height:34px;">
+                <i data-lucide="bot" style="width:18px;height:18px;"></i>
+              </div>
+              <div>
+                <div style="font-weight:700;font-size:0.95rem;">FINAI Advisory Assistant</div>
+                <div class="text-xs" style="color:#94A3B8;">Anthropic Claude 3.5 Sonnet Integration</div>
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <span class="badge" style="background:rgba(22,163,74,0.2);color:#4ADE80;border:1px solid rgba(74,222,128,0.3);font-size:0.7rem;">
+                ● Active Session
+              </span>
+            </div>
+          </div>
+
+          <!-- Chat Messages Area -->
+          <div class="chat-messages" id="chat-messages">
+            <!-- Messages rendered dynamically via ai-assistant.js -->
+          </div>
+
+          <!-- Suggested Prompts Row -->
+          <div class="chat-suggested-prompts">
+            <button class="suggested-chip" data-prompt="How can I increase my eligible loan amount?">
+              💡 How do I increase eligible loan amount?
+            </button>
+            <button class="suggested-chip" data-prompt="What is FOIR and how do banks calculate it?">
+              📊 Explain FOIR calculation
+            </button>
+            <button class="suggested-chip" data-prompt="How can I improve my CIBIL score quickly from 680 to 750+?">
+              📈 How to boost CIBIL score?
+            </button>
+            <button class="suggested-chip" data-prompt="Explain the difference between flat vs reducing interest rate.">
+              ⚖️ Flat vs Reducing Interest
+            </button>
+            <button class="suggested-chip" data-prompt="What documents do I need to get an unsecured personal loan?">
+              📋 Required Loan Documents
+            </button>
+          </div>
+
+          <!-- Input Bar -->
+          <form id="chat-form" class="chat-input-bar">
+            <input
+              type="text"
+              id="chat-input"
+              class="chat-input"
+              placeholder="Ask anything about loans, EMI formulas, or financial eligibility..."
+              autocomplete="off"
+              required
+            >
+            <button type="submit" class="btn btn-primary btn-icon" id="btn-send-chat" title="Send Message">
+              <i data-lucide="send" style="width:18px;height:18px;"></i>
+            </button>
+          </form>
+        </div>
+
+        <!-- Disclaimer -->
+        <div style="margin-top:1.25rem;text-align:center;font-size:0.78rem;color:var(--navy-500);">
+          <i data-lucide="info" style="width:13px;height:13px;display:inline;vertical-align:text-bottom;"></i>
+          FINAI Financial Assistant provides informational educational guidance. Loan approval remains subject to individual bank underwriting and verification.
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/ai-assistant.js"></script>
+</body>
+</html>

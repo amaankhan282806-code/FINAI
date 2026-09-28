@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Credit Score Analyzer — FINAI</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* Gauge Meter Styles */
+    .gauge-wrapper {
+      position: relative;
+      width: 260px;
+      height: 140px;
+      margin: 1.5rem auto 1rem;
+      overflow: hidden;
+    }
+    .gauge-arc {
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 180deg at 50% 50%,
+        #EF4444 0deg,
+        #F59E0B 45deg,
+        #3B82F6 90deg,
+        #10B981 135deg,
+        #16A34A 180deg
+      );
+      mask: radial-gradient(circle at 50% 50%, transparent 68%, black 69%);
+      -webkit-mask: radial-gradient(circle at 50% 50%, transparent 68%, black 69%);
+    }
+    .gauge-needle {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 4px;
+      height: 105px;
+      background: #101828;
+      transform-origin: bottom center;
+      transform: rotate(45deg);
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .gauge-needle::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: -6px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #101828;
+      border: 3px solid #FFFFFF;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-logo">
+          <div class="brand-icon">
+            <i data-lucide="shield-check" style="width:20px;height:20px;"></i>
+          </div>
+          <span>FIN<span style="color:var(--secondary-indigo);">AI</span></span>
+        </a>
+        <span class="brand-badge">BFSI</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Modules</div>
+        <a href="dashboard.html" class="nav-link">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="eligibility.html" class="nav-link">
+          <i data-lucide="check-circle-2"></i>
+          <span>Loan Eligibility</span>
+        </a>
+        <a href="emi-calculator.html" class="nav-link">
+          <i data-lucide="calculator"></i>
+          <span>EMI Calculator</span>
+        </a>
+        <a href="credit-analyzer.html" class="nav-link active">
+          <i data-lucide="gauge"></i>
+          <span>Credit Analyzer</span>
+        </a>
+        <a href="ai-assistant.html" class="nav-link">
+          <i data-lucide="bot"></i>
+          <span>AI Assistant</span>
+        </a>
+        <a href="history.html" class="nav-link">
+          <i data-lucide="history"></i>
+          <span>Application History</span>
+        </a>
+
+        <div class="nav-section-title" style="margin-top:1rem;">Settings & System</div>
+        <a href="settings.html" class="nav-link">
+          <i data-lucide="settings"></i>
+          <span>Settings & Config</span>
+        </a>
+        <a href="index.html" class="nav-link">
+          <i data-lucide="external-link"></i>
+          <span>Landing Page</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status-box">
+          <div style="display:flex;align-items:center;margin-bottom:0.35rem;">
+            <span class="status-dot"></span>
+            <span class="font-semibold text-xs" style="color:#FFF;">System Online</span>
+          </div>
+          <div class="text-xs text-muted" id="status-ai-indicator">Checking AI Engine...</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">
+            <i data-lucide="menu" style="width:22px;height:22px;"></i>
+          </button>
+          <div class="breadcrumb-trail">
+            <a href="dashboard.html" style="color:inherit;">Portal</a>
+            <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+            <span class="current">Credit Score Analyzer</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="topbar-actions">
+            <a href="ai-assistant.html" class="icon-btn" title="Ask AI Financial Assistant">
+              <i data-lucide="sparkles" style="width:18px;height:18px;color:var(--accent-cyan);"></i>
+            </a>
+          </div>
+
+          <div class="user-profile-pill" onclick="window.location.href='settings.html'">
+            <div class="user-avatar" id="user-display-avatar">RS</div>
+            <div>
+              <div class="user-meta-name" id="user-display-name">Rahul Sharma</div>
+              <div class="user-meta-role">Fintech User</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div style="margin-bottom:2rem;">
+          <h1>Credit Score Analyzer</h1>
+          <p style="margin-top:0.35rem;">
+            Evaluate your credit profile across the 5 fundamental lending dimensions and get actionable optimization strategies.
+          </p>
+        </div>
+
+        <!-- 2-Column Grid -->
+        <div style="display:grid;grid-template-columns:1.15fr 0.85fr;gap:2rem;margin-bottom:2.5rem;">
+          <!-- Left: Input Form -->
+          <div class="glass-card">
+            <h3 style="font-size:1.2rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem;">
+              <i data-lucide="sliders-horizontal" style="color:var(--secondary-indigo);"></i>
+              Self-Reported Credit Profile Inputs
+            </h3>
+
+            <form id="credit-analyzer-form">
+              <!-- Score Slider -->
+              <div class="form-group" style="margin-bottom:1.5rem;">
+                <label class="form-label" for="creditScore">
+                  <span>Current Credit Score (300 to 900)</span>
+                  <span class="helper">CIBIL / Experian estimate</span>
+                </label>
+                <div class="input-wrapper">
+                  <div class="input-icon"><i data-lucide="gauge"></i></div>
+                  <input type="number" id="creditScore" class="form-control has-icon" value="750" min="300" max="900" step="5">
+                </div>
+                <div class="slider-group">
+                  <input type="range" id="creditScoreRange" class="range-slider" min="300" max="900" step="5" value="750">
+                  <div class="slider-labels">
+                    <span>300 (Poor)</span>
+                    <span>650 (Fair)</span>
+                    <span>750 (Good)</span>
+                    <span>900 (Excellent)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Payment History Select -->
+              <div class="form-group" style="margin-bottom:1.5rem;">
+                <label class="form-label" for="paymentHistory">
+                  <span>Payment History (35% weight)</span>
+                  <span class="helper">Timeliness of loan EMIs and credit cards</span>
+                </label>
+                <select id="paymentHistory" class="form-control form-select">
+                  <option value="excellent" selected>Excellent — Zero missed or late payments (100% on-time)</option>
+                  <option value="good">Good — Occasional minor delay (<30 days), all settled</option>
+                  <option value="fair">Fair — 1 or 2 past defaults or 60-day delays</option>
+                  <option value="poor">Poor — Multiple settled accounts or active defaults</option>
+                </select>
+              </div>
+
+              <!-- Credit Utilization Ratio -->
+              <div class="form-group" style="margin-bottom:1.5rem;">
+                <label class="form-label" for="creditUtilization">
+                  <span>Credit Card Utilization Ratio (%)</span>
+                  <span class="helper">Recommended benchmark: < 30%</span>
+                </label>
+                <div class="input-wrapper">
+                  <div class="input-icon"><i data-lucide="credit-card"></i></div>
+                  <input type="number" id="creditUtilization" class="form-control has-icon" value="25" min="0" max="100">
+                </div>
+                <div class="slider-group">
+                  <input type="range" id="utilizationRange" class="range-slider" min="0" max="100" step="1" value="25">
+                  <div class="slider-labels">
+                    <span>0%</span>
+                    <span>30% (Recommended Max)</span>
+                    <span>100%</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Credit History Length -->
+              <div class="form-group" style="margin-bottom:1.5rem;">
+                <label class="form-label" for="creditHistoryLength">
+                  <span>Credit History Age (Years)</span>
+                  <span class="helper">Age of oldest active loan / card</span>
+                </label>
+                <div class="input-wrapper">
+                  <div class="input-icon"><i data-lucide="clock"></i></div>
+                  <input type="number" id="creditHistoryLength" class="form-control has-icon" value="4" min="0" max="25">
+                </div>
+                <div class="slider-group">
+                  <input type="range" id="historyRange" class="range-slider" min="0" max="20" step="1" value="4">
+                  <div class="slider-labels">
+                    <span>0 Yrs (New)</span>
+                    <span>5 Yrs (Mature)</span>
+                    <span>20 Yrs</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Active Loans & Inquiries Row -->
+              <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:1rem;">
+                <div class="form-group">
+                  <label class="form-label" for="activeLoans">Active Loans</label>
+                  <input type="number" id="activeLoans" class="form-control" value="2" min="0" max="15">
+                  <input type="range" id="loansRange" class="range-slider" min="0" max="10" step="1" value="2" style="margin-top:0.4rem;">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="recentInquiries">Recent Inquiries (6 Mo)</label>
+                  <input type="number" id="recentInquiries" class="form-control" value="1" min="0" max="15">
+                  <input type="range" id="inquiriesRange" class="range-slider" min="0" max="10" step="1" value="1" style="margin-top:0.4rem;">
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Right: Visual Score Gauge & Radar -->
+          <div class="glass-card" style="display:flex;flex-direction:column;justify-content:space-between;text-align:center;">
+            <div>
+              <span class="badge badge-indigo" style="margin-bottom:0.75rem;">Simulated Credit Health</span>
+
+              <!-- Semi-circle Gauge -->
+              <div class="gauge-wrapper">
+                <div class="gauge-arc"></div>
+                <div class="gauge-needle" id="gauge-needle"></div>
+              </div>
+
+              <div style="margin-top:-0.5rem;margin-bottom:1rem;">
+                <div id="score-display-number" style="font-size:3.2rem;font-weight:800;color:var(--primary-navy);line-height:1;">750</div>
+                <div style="margin-top:0.35rem;">
+                  <span id="score-display-category" class="badge badge-success">Very Good</span>
+                </div>
+                <p id="score-display-desc" class="text-sm text-muted" style="margin-top:0.6rem;max-width:320px;margin-left:auto;margin-right:auto;">
+                  Strong financial discipline. High probability of smooth loan approvals.
+                </p>
+              </div>
+
+              <div style="background:var(--navy-50);border:1px solid var(--navy-200);border-radius:var(--radius-md);padding:0.75rem 1rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+                <span class="text-xs font-semibold text-muted">Lending Approval Likelihood:</span>
+                <span id="score-approval-prob" class="font-bold text-sm" style="color:var(--color-success);">High</span>
+              </div>
+            </div>
+
+            <!-- Factor Radar Chart -->
+            <div>
+              <div style="height:210px;position:relative;">
+                <canvas id="creditFactorRadar"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 Credit Dimensions Breakdown -->
+        <div class="glass-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="stat-icon green" style="width:36px;height:36px;"><i data-lucide="list-checks"></i></div>
+              <div>
+                <h3>Credit Health Factor Breakdown & Action Items</h3>
+                <p>Specific recommendations to improve each scoring parameter</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="credit-factors-list">
+            <!-- Populated dynamically via credit-analyzer.js -->
+          </div>
+
+          <!-- Educational Disclaimer -->
+          <div style="margin-top:1.5rem;padding:1rem;background:var(--navy-50);border-radius:var(--radius-md);border:1px solid var(--navy-200);font-size:0.8rem;color:var(--navy-600);">
+            <i data-lucide="shield-alert" style="width:16px;height:16px;color:var(--color-warning);display:inline;vertical-align:text-bottom;"></i>
+            <strong>Educational Disclaimer:</strong> FINAI calculates credit health based on user-reported estimates and industry scoring weights. We do not access official credit bureau databases (CIBIL, Experian, Equifax, CRIF). To view your official credit report, consult certified credit bureaus.
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/credit-analyzer.js"></script>
+</body>
+</html>

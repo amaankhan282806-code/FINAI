@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMI Calculator — FINAI</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-logo">
+          <div class="brand-icon">
+            <i data-lucide="shield-check" style="width:20px;height:20px;"></i>
+          </div>
+          <span>FIN<span style="color:var(--secondary-indigo);">AI</span></span>
+        </a>
+        <span class="brand-badge">BFSI</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Modules</div>
+        <a href="dashboard.html" class="nav-link">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="eligibility.html" class="nav-link">
+          <i data-lucide="check-circle-2"></i>
+          <span>Loan Eligibility</span>
+        </a>
+        <a href="emi-calculator.html" class="nav-link active">
+          <i data-lucide="calculator"></i>
+          <span>EMI Calculator</span>
+        </a>
+        <a href="credit-analyzer.html" class="nav-link">
+          <i data-lucide="gauge"></i>
+          <span>Credit Analyzer</span>
+        </a>
+        <a href="ai-assistant.html" class="nav-link">
+          <i data-lucide="bot"></i>
+          <span>AI Assistant</span>
+        </a>
+        <a href="history.html" class="nav-link">
+          <i data-lucide="history"></i>
+          <span>Application History</span>
+        </a>
+
+        <div class="nav-section-title" style="margin-top:1rem;">Settings & System</div>
+        <a href="settings.html" class="nav-link">
+          <i data-lucide="settings"></i>
+          <span>Settings & Config</span>
+        </a>
+        <a href="index.html" class="nav-link">
+          <i data-lucide="external-link"></i>
+          <span>Landing Page</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status-box">
+          <div style="display:flex;align-items:center;margin-bottom:0.35rem;">
+            <span class="status-dot"></span>
+            <span class="font-semibold text-xs" style="color:#FFF;">System Online</span>
+          </div>
+          <div class="text-xs text-muted" id="status-ai-indicator">Checking AI Engine...</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">
+            <i data-lucide="menu" style="width:22px;height:22px;"></i>
+          </button>
+          <div class="breadcrumb-trail">
+            <a href="dashboard.html" style="color:inherit;">Portal</a>
+            <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+            <span class="current">Interactive EMI Calculator</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="topbar-actions">
+            <a href="ai-assistant.html" class="icon-btn" title="Ask AI Financial Assistant">
+              <i data-lucide="sparkles" style="width:18px;height:18px;color:var(--accent-cyan);"></i>
+            </a>
+          </div>
+
+          <div class="user-profile-pill" onclick="window.location.href='settings.html'">
+            <div class="user-avatar" id="user-display-avatar">RS</div>
+            <div>
+              <div class="user-meta-name" id="user-display-name">Rahul Sharma</div>
+              <div class="user-meta-role">Fintech User</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <main class="page-content">
+        <div style="margin-bottom:2rem;">
+          <h1>Interactive EMI Calculator</h1>
+          <p style="margin-top:0.35rem;">
+            Simulate monthly repayment obligations, total interest costs, and analyze complete amortization schedules in real time.
+          </p>
+        </div>
+
+        <!-- 2-Column Calculator Grid -->
+        <div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:2rem;margin-bottom:2.5rem;">
+          <!-- Left: Inputs & Sliders -->
+          <div class="glass-card">
+            <h3 style="font-size:1.2rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem;">
+              <i data-lucide="sliders" style="color:var(--secondary-indigo);"></i>
+              Loan Parameters
+            </h3>
+
+            <!-- Loan Amount -->
+            <div class="form-group" style="margin-bottom:1.75rem;">
+              <label class="form-label" for="loanAmount">
+                <span>Principal Loan Amount</span>
+                <span class="helper">Enter amount or drag slider</span>
+              </label>
+              <div class="input-wrapper">
+                <div class="input-prefix">₹</div>
+                <input type="number" id="loanAmount" class="form-control has-prefix" value="1000000" min="20000" max="10000000" step="10000">
+              </div>
+              <div class="slider-group">
+                <input type="range" id="loanAmountRange" class="range-slider" min="50000" max="5000000" step="25000" value="1000000">
+                <div class="slider-labels">
+                  <span>₹50,000</span>
+                  <span>₹25 Lakhs</span>
+                  <span>₹50 Lakhs</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interest Rate -->
+            <div class="form-group" style="margin-bottom:1.75rem;">
+              <label class="form-label" for="interestRate">
+                <span>Annual Interest Rate (%)</span>
+                <span class="helper">Standard bank benchmark: 8.5% - 14%</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="number" id="interestRate" class="form-control" value="10.5" min="1" max="30" step="0.1">
+              </div>
+              <div class="slider-group">
+                <input type="range" id="interestRateRange" class="range-slider" min="5" max="24" step="0.25" value="10.5">
+                <div class="slider-labels">
+                  <span>5% (Subsidized)</span>
+                  <span>14% (Standard)</span>
+                  <span>24% (Unsecured)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tenure -->
+            <div class="form-group" style="margin-bottom:1rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.45rem;">
+                <label class="form-label" for="loanTenure" style="margin-bottom:0;">Loan Tenure</label>
+                <div style="width:120px;">
+                  <select id="tenureType" class="form-control form-select" style="padding:0.4rem 0.65rem;font-size:0.82rem;">
+                    <option value="months">Months</option>
+                    <option value="years">Years</option>
+                  </select>
+                </div>
+              </div>
+              <div class="input-wrapper">
+                <input type="number" id="loanTenure" class="form-control" value="60" min="6" max="360" step="1">
+              </div>
+              <div class="slider-group">
+                <input type="range" id="loanTenureRange" class="range-slider" min="6" max="240" step="6" value="60">
+                <div class="slider-labels">
+                  <span>6 Months</span>
+                  <span>60 Months (5 Yrs)</span>
+                  <span>240 Months (20 Yrs)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Formula Notice -->
+            <div style="margin-top:2rem;padding:0.9rem;background:var(--navy-50);border-radius:var(--radius-md);font-size:0.8rem;color:var(--navy-600);border:1px solid var(--navy-200);">
+              <i data-lucide="info" style="width:15px;height:15px;color:var(--secondary-indigo);display:inline;vertical-align:text-bottom;"></i>
+              <strong>Formula:</strong> <code>EMI = P × R × (1+R)ⁿ / ((1+R)ⁿ - 1)</code>, where <em>R</em> is the monthly interest rate.
+            </div>
+          </div>
+
+          <!-- Right: Visual Results & Doughnut Chart -->
+          <div class="glass-card" style="display:flex;flex-direction:column;justify-content:space-between;">
+            <div>
+              <div style="background:linear-gradient(135deg,#101828,#1E1B4B);padding:1.5rem;border-radius:var(--radius-lg);color:#FFFFFF;margin-bottom:1.5rem;box-shadow:0 10px 25px -5px rgba(16,24,40,0.25);">
+                <div class="text-xs" style="color:var(--accent-cyan);text-transform:uppercase;letter-spacing:0.06em;font-weight:700;">Equated Monthly Installment</div>
+                <div id="out-monthly-emi" style="font-size:2.4rem;font-weight:800;line-height:1.2;margin:0.35rem 0;">₹21,494</div>
+                <div class="text-xs" style="color:#CBD5E1;">Per month payable to lender</div>
+              </div>
+
+              <!-- Metrics Grid -->
+              <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:1rem;margin-bottom:1.5rem;">
+                <div style="background:var(--navy-50);border:1px solid var(--navy-200);padding:0.85rem;border-radius:var(--radius-md);">
+                  <div class="text-xs text-muted">Principal Amount</div>
+                  <div id="out-principal-amount" class="text-md font-bold" style="color:var(--secondary-indigo);">₹10,00,000</div>
+                  <div class="text-xs text-muted" id="ratio-principal-text">70% of total</div>
+                </div>
+
+                <div style="background:var(--navy-50);border:1px solid var(--navy-200);padding:0.85rem;border-radius:var(--radius-md);">
+                  <div class="text-xs text-muted">Total Interest Payable</div>
+                  <div id="out-total-interest" class="text-md font-bold" style="color:var(--accent-cyan);">₹2,89,640</div>
+                  <div class="text-xs text-muted" id="ratio-interest-text">30% of total</div>
+                </div>
+              </div>
+
+              <!-- Total Repayment -->
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem 1rem;background:var(--navy-100);border-radius:var(--radius-md);margin-bottom:1.5rem;">
+                <span class="text-sm font-semibold">Total Repayment (Principal + Interest):</span>
+                <span id="out-total-repayment" class="font-bold font-mono" style="font-size:1.1rem;color:var(--primary-navy);">₹12,89,640</span>
+              </div>
+            </div>
+
+            <!-- Chart -->
+            <div style="position:relative;height:180px;display:flex;align-items:center;justify-content:center;">
+              <canvas id="emiDonutChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Amortization Schedule Card -->
+        <div class="glass-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="stat-icon indigo" style="width:36px;height:36px;"><i data-lucide="table"></i></div>
+              <div>
+                <h3>Amortization Repayment Schedule</h3>
+                <p>Breakdown of principal paid, interest paid, and remaining balance</p>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+              <!-- View Switcher -->
+              <div style="display:inline-flex;padding:3px;background:var(--navy-100);border-radius:var(--radius-md);">
+                <button type="button" class="btn btn-primary btn-sm" id="btn-view-yearly">
+                  Yearly Summary
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-view-monthly">
+                  Monthly Breakdown
+                </button>
+              </div>
+
+              <!-- Export CSV -->
+              <button type="button" class="btn btn-outline btn-sm" id="btn-export-csv">
+                <i data-lucide="download" style="width:14px;height:14px;"></i> Export CSV
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead id="amortization-table-head">
+                <!-- Populated dynamically -->
+              </thead>
+              <tbody id="amortization-table-body">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination container for monthly view -->
+          <div id="amortization-pagination" style="display:none;"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/emi-calculator.js"></script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application History — FINAI</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-logo">
+          <div class="brand-icon">
+            <i data-lucide="shield-check" style="width:20px;height:20px;"></i>
+          </div>
+          <span>FIN<span style="color:var(--secondary-indigo);">AI</span></span>
+        </a>
+        <span class="brand-badge">BFSI</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Modules</div>
+        <a href="dashboard.html" class="nav-link">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="eligibility.html" class="nav-link">
+          <i data-lucide="check-circle-2"></i>
+          <span>Loan Eligibility</span>
+        </a>
+        <a href="emi-calculator.html" class="nav-link">
+          <i data-lucide="calculator"></i>
+          <span>EMI Calculator</span>
+        </a>
+        <a href="credit-analyzer.html" class="nav-link">
+          <i data-lucide="gauge"></i>
+          <span>Credit Analyzer</span>
+        </a>
+        <a href="ai-assistant.html" class="nav-link">
+          <i data-lucide="bot"></i>
+          <span>AI Assistant</span>
+        </a>
+        <a href="history.html" class="nav-link active">
+          <i data-lucide="history"></i>
+          <span>Application History</span>
+        </a>
+
+        <div class="nav-section-title" style="margin-top:1rem;">Settings & System</div>
+        <a href="settings.html" class="nav-link">
+          <i data-lucide="settings"></i>
+          <span>Settings & Config</span>
+        </a>
+        <a href="index.html" class="nav-link">
+          <i data-lucide="external-link"></i>
+          <span>Landing Page</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status-box">
+          <div style="display:flex;align-items:center;margin-bottom:0.35rem;">
+            <span class="status-dot"></span>
+            <span class="font-semibold text-xs" style="color:#FFF;">System Online</span>
+          </div>
+          <div class="text-xs text-muted" id="status-ai-indicator">Checking AI Engine...</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">
+            <i data-lucide="menu" style="width:22px;height:22px;"></i>
+          </button>
+          <div class="breadcrumb-trail">
+            <a href="dashboard.html" style="color:inherit;">Portal</a>
+            <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+            <span class="current">Application History</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="topbar-actions">
+            <a href="ai-assistant.html" class="icon-btn" title="Ask AI Financial Assistant">
+              <i data-lucide="sparkles" style="width:18px;height:18px;color:var(--accent-cyan);"></i>
+            </a>
+          </div>
+
+          <div class="user-profile-pill" onclick="window.location.href='settings.html'">
+            <div class="user-avatar" id="user-display-avatar">RS</div>
+            <div>
+              <div class="user-meta-name" id="user-display-name">Rahul Sharma</div>
+              <div class="user-meta-role">Fintech User</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;">
+          <div>
+            <h1>Application & Calculation History</h1>
+            <p style="margin-top:0.25rem;">
+              Audit previous loan assessments, compare financial scenarios, and review historical criteria breakdowns.
+            </p>
+          </div>
+
+          <div style="display:flex;gap:0.75rem;align-items:center;">
+            <button type="button" class="btn btn-primary btn-sm" id="btn-export-history">
+              <i data-lucide="download" style="width:14px;height:14px;"></i> Export to CSV
+            </button>
+            <a href="eligibility.html" class="btn btn-cyan btn-sm">
+              <i data-lucide="plus" style="width:14px;height:14px;"></i> New Evaluation
+            </a>
+          </div>
+        </div>
+
+        <!-- Filter Bar Card -->
+        <div class="glass-card" style="padding:1.25rem;margin-bottom:1.5rem;">
+          <div style="display:grid;grid-template-columns:1.5fr 1fr auto;gap:1rem;align-items:center;">
+            <!-- Search -->
+            <div class="input-wrapper">
+              <div class="input-icon"><i data-lucide="search"></i></div>
+              <input
+                type="text"
+                id="history-search"
+                class="form-control has-icon"
+                placeholder="Search by Applicant Name or Reference ID (e.g. APP-2026-8941)..."
+              >
+            </div>
+
+            <!-- Filter Status -->
+            <div>
+              <select id="history-filter-status" class="form-control form-select">
+                <option value="ALL">All Eligibility Statuses</option>
+                <option value="ELIGIBLE">Highly Eligible Only</option>
+                <option value="CONDITIONAL">Conditional Only</option>
+                <option value="NEEDS_IMPROVEMENT">Requires Improvement Only</option>
+              </select>
+            </div>
+
+            <!-- Total count label -->
+            <div id="history-count" class="text-sm font-semibold text-muted" style="white-space:nowrap;">
+              Loading records...
+            </div>
+          </div>
+        </div>
+
+        <!-- Applications Table Card -->
+        <div class="glass-card">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Ref ID</th>
+                  <th>Applicant Name</th>
+                  <th>Date & Time</th>
+                  <th>Requested (₹)</th>
+                  <th>Indicative Limit (₹)</th>
+                  <th>Status</th>
+                  <th style="text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="history-table-body">
+                <!-- Rendered dynamically by history.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- History Detail Modal -->
+  <div id="historyDetailModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 style="font-size:1.15rem;">Application Evaluation Report</h3>
+        <button class="btn btn-secondary btn-icon" onclick="closeModal('historyDetailModal')">
+          <i data-lucide="x" style="width:18px;height:18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body" id="historyDetailModalContent">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/history.js"></script>
+  <script>
+    function closeModal(id) {
+      document.getElementById(id)?.classList.remove('active');
+    }
+  </script>
+</body>
+</html>

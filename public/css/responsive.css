@@ -1,0 +1,114 @@
+/* FINAI — Responsive Design & Mobile Adaptations */
+
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+
+  .page-content {
+    padding: 1.5rem;
+  }
+
+  .form-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .main-wrapper {
+    margin-left: 0;
+  }
+
+  .mobile-menu-btn {
+    display: flex;
+  }
+
+  .topbar {
+    padding: 0 1.25rem;
+  }
+
+  .welcome-hero {
+    padding: 1.75rem;
+  }
+
+  .welcome-content h1 {
+    font-size: 1.65rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-container {
+    height: 560px;
+  }
+
+  .chat-message {
+    max-width: 92%;
+  }
+
+  .chat-suggested-prompts {
+    padding: 0.5rem 1rem;
+  }
+
+  .modal-dialog {
+    margin: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-content {
+    padding: 1rem;
+  }
+
+  .stat-card {
+    padding: 1.15rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+
+  .result-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .toast {
+    min-width: calc(100vw - 2rem);
+  }
+}
+
+/* Sidebar Overlay for Mobile */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 24, 40, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 95;
+}
+
+.sidebar-overlay.active {
+  display: block;
+}

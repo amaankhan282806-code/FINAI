@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — FINAI Loan Eligibility Checker</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-logo">
+          <div class="brand-icon">
+            <i data-lucide="shield-check" style="width:20px;height:20px;"></i>
+          </div>
+          <span>FIN<span style="color:var(--secondary-indigo);">AI</span></span>
+        </a>
+        <span class="brand-badge">BFSI</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Modules</div>
+        <a href="dashboard.html" class="nav-link active">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="eligibility.html" class="nav-link">
+          <i data-lucide="check-circle-2"></i>
+          <span>Loan Eligibility</span>
+        </a>
+        <a href="emi-calculator.html" class="nav-link">
+          <i data-lucide="calculator"></i>
+          <span>EMI Calculator</span>
+        </a>
+        <a href="credit-analyzer.html" class="nav-link">
+          <i data-lucide="gauge"></i>
+          <span>Credit Analyzer</span>
+        </a>
+        <a href="ai-assistant.html" class="nav-link">
+          <i data-lucide="bot"></i>
+          <span>AI Assistant</span>
+        </a>
+        <a href="history.html" class="nav-link">
+          <i data-lucide="history"></i>
+          <span>Application History</span>
+        </a>
+
+        <div class="nav-section-title" style="margin-top:1rem;">Settings & System</div>
+        <a href="settings.html" class="nav-link">
+          <i data-lucide="settings"></i>
+          <span>Settings & Config</span>
+        </a>
+        <a href="index.html" class="nav-link">
+          <i data-lucide="external-link"></i>
+          <span>Landing Page</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status-box">
+          <div style="display:flex;align-items:center;margin-bottom:0.35rem;">
+            <span class="status-dot"></span>
+            <span class="font-semibold text-xs" style="color:#FFF;">System Online</span>
+          </div>
+          <div class="text-xs text-muted" id="status-ai-indicator">Checking AI Engine...</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-wrapper">
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">
+            <i data-lucide="menu" style="width:22px;height:22px;"></i>
+          </button>
+          <div class="breadcrumb-trail">
+            <span>Portal</span>
+            <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+            <span class="current">Dashboard</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="topbar-actions">
+            <a href="ai-assistant.html" class="icon-btn" title="Ask AI Financial Assistant">
+              <i data-lucide="sparkles" style="width:18px;height:18px;color:var(--accent-cyan);"></i>
+            </a>
+            <div class="icon-btn" title="Notifications">
+              <i data-lucide="bell" style="width:18px;height:18px;"></i>
+              <span class="icon-badge"></span>
+            </div>
+          </div>
+
+          <div class="user-profile-pill" onclick="window.location.href='settings.html'">
+            <div class="user-avatar" id="user-display-avatar">RS</div>
+            <div>
+              <div class="user-meta-name" id="user-display-name">Rahul Sharma</div>
+              <div class="user-meta-role">Fintech User</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <main class="page-content">
+        <!-- Personalized Welcome Banner -->
+        <section class="welcome-hero animate-fade-in">
+          <div class="welcome-content">
+            <h1>Welcome back, <span id="welcome-name">Rahul</span> 👋</h1>
+            <p>
+              Your intelligent BFSI portal is active. Review your latest indicative eligibility, simulate new loan repayment schedules, and check your credit standing.
+            </p>
+            <div class="hero-actions">
+              <a href="eligibility.html" class="btn btn-primary">
+                <i data-lucide="plus-circle"></i> Check New Eligibility
+              </a>
+              <a href="emi-calculator.html" class="btn btn-outline" style="border-color:rgba(255,255,255,0.4);color:#FFFFFF;">
+                <i data-lucide="calculator"></i> Launch EMI Calculator
+              </a>
+              <a href="ai-assistant.html" class="btn btn-cyan">
+                <i data-lucide="bot"></i> Consult Claude AI
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- KPI Summary Cards Grid -->
+        <section class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-label">Indicative Eligible Limit</span>
+              <div class="stat-icon green"><i data-lucide="shield-check"></i></div>
+            </div>
+            <div class="stat-value" id="stat-indicative-amount" style="color:var(--color-success);">₹15,00,000</div>
+            <div class="stat-trend" style="color:var(--color-success);">
+              <i data-lucide="trending-up" style="width:14px;height:14px;"></i>
+              <span>Monthly Salary × 20 Indicative Rule</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-label">Average Credit Score</span>
+              <div class="stat-icon indigo"><i data-lucide="gauge"></i></div>
+            </div>
+            <div class="stat-value" id="stat-avg-credit">780</div>
+            <div class="stat-trend" style="color:var(--color-success);">
+              <i data-lucide="check" style="width:14px;height:14px;"></i>
+              <span>Meets > 700 Benchmark</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-label">Latest Assessment Status</span>
+              <div class="stat-icon amber"><i data-lucide="award"></i></div>
+            </div>
+            <div style="margin-top:0.4rem;">
+              <span id="stat-latest-status" class="badge badge-success">Highly Eligible</span>
+            </div>
+            <div class="stat-trend text-muted">
+              <span>All 4 Underwriting Rules Satisfied</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-label">Total Checks Evaluated</span>
+              <div class="stat-icon cyan"><i data-lucide="activity"></i></div>
+            </div>
+            <div class="stat-value" id="stat-total-checks">3</div>
+            <div class="stat-trend text-muted">
+              <i data-lucide="database" style="width:14px;height:14px;"></i>
+              <span id="status-db-indicator">Synced Locally</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Main Dashboard 2-Column Grid -->
+        <div style="display:grid;grid-template-columns:1.8fr 1.2fr;gap:1.75rem;">
+          <!-- Left Column -->
+          <div>
+            <!-- Recent Applications Table Card -->
+            <div class="glass-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <div class="stat-icon indigo" style="width:36px;height:36px;"><i data-lucide="file-text" style="width:18px;height:18px;"></i></div>
+                  <div>
+                    <h3>Recent Loan Eligibility Checks</h3>
+                    <p>Latest applicant submissions and indicative limits</p>
+                  </div>
+                </div>
+                <a href="history.html" class="btn btn-outline btn-sm">
+                  View All <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+                </a>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Ref ID</th>
+                      <th>Applicant</th>
+                      <th>Requested (₹)</th>
+                      <th>Indicative (₹)</th>
+                      <th>Status</th>
+                      <th>Evaluated</th>
+                      <th style="text-align:right;">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recent-applications-body">
+                    <!-- Populated dynamically via dashboard.js -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div>
+            <!-- Status Distribution Chart Card -->
+            <div class="glass-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <div class="stat-icon cyan" style="width:36px;height:36px;"><i data-lucide="pie-chart" style="width:18px;height:18px;"></i></div>
+                  <div>
+                    <h3>Eligibility Distribution</h3>
+                    <p>Overview of assessed profiles</p>
+                  </div>
+                </div>
+              </div>
+
+              <div style="height:220px;position:relative;">
+                <canvas id="dashboardStatusChart"></canvas>
+              </div>
+            </div>
+
+            <!-- AI Assistant Quick Card -->
+            <div class="glass-card" style="background:linear-gradient(135deg,#FFFFFF 0%,var(--indigo-light) 100%);border-color:rgba(99,91,255,0.3);">
+              <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;">
+                <div class="stat-icon indigo" style="width:40px;height:40px;">
+                  <i data-lucide="sparkles"></i>
+                </div>
+                <div>
+                  <h3 style="font-size:1.1rem;">AI Financial Assistant</h3>
+                  <p class="text-xs text-muted">Powered by Anthropic Claude</p>
+                </div>
+              </div>
+              <p class="text-sm" style="color:var(--navy-700);margin-bottom:1.25rem;">
+                Have questions about reducing your EMI, improving CIBIL, or qualifying for a higher loan amount?
+              </p>
+              <a href="ai-assistant.html" class="btn btn-primary w-full">
+                <i data-lucide="message-square"></i> Open AI Consultation
+              </a>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div id="detailModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 style="font-size:1.15rem;">Application Details</h3>
+        <button class="btn btn-secondary btn-icon" onclick="closeModal('detailModal')">
+          <i data-lucide="x" style="width:18px;height:18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body" id="detailModalContent">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const u = getCurrentUser();
+      if (u && document.getElementById('welcome-name')) {
+        document.getElementById('welcome-name').textContent = u.fullName.split(' ')[0] || 'Borrower';
+      }
+    });
+  </script>
+</body>
+</html>

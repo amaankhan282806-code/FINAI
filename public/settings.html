@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings & Integrations — FINAI</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-logo">
+          <div class="brand-icon">
+            <i data-lucide="shield-check" style="width:20px;height:20px;"></i>
+          </div>
+          <span>FIN<span style="color:var(--secondary-indigo);">AI</span></span>
+        </a>
+        <span class="brand-badge">BFSI</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Modules</div>
+        <a href="dashboard.html" class="nav-link">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="eligibility.html" class="nav-link">
+          <i data-lucide="check-circle-2"></i>
+          <span>Loan Eligibility</span>
+        </a>
+        <a href="emi-calculator.html" class="nav-link">
+          <i data-lucide="calculator"></i>
+          <span>EMI Calculator</span>
+        </a>
+        <a href="credit-analyzer.html" class="nav-link">
+          <i data-lucide="gauge"></i>
+          <span>Credit Analyzer</span>
+        </a>
+        <a href="ai-assistant.html" class="nav-link">
+          <i data-lucide="bot"></i>
+          <span>AI Assistant</span>
+        </a>
+        <a href="history.html" class="nav-link">
+          <i data-lucide="history"></i>
+          <span>Application History</span>
+        </a>
+
+        <div class="nav-section-title" style="margin-top:1rem;">Settings & System</div>
+        <a href="settings.html" class="nav-link active">
+          <i data-lucide="settings"></i>
+          <span>Settings & Config</span>
+        </a>
+        <a href="index.html" class="nav-link">
+          <i data-lucide="external-link"></i>
+          <span>Landing Page</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status-box">
+          <div style="display:flex;align-items:center;margin-bottom:0.35rem;">
+            <span class="status-dot"></span>
+            <span class="font-semibold text-xs" style="color:#FFF;">System Online</span>
+          </div>
+          <div class="text-xs text-muted" id="status-ai-indicator">Checking AI Engine...</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">
+            <i data-lucide="menu" style="width:22px;height:22px;"></i>
+          </button>
+          <div class="breadcrumb-trail">
+            <a href="dashboard.html" style="color:inherit;">Portal</a>
+            <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+            <span class="current">Settings & Integrations</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="user-profile-pill">
+            <div class="user-avatar" id="user-display-avatar">RS</div>
+            <div>
+              <div class="user-meta-name" id="user-display-name">Rahul Sharma</div>
+              <div class="user-meta-role">Fintech User</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div style="margin-bottom:2rem;">
+          <h1>Settings & System Configuration</h1>
+          <p style="margin-top:0.25rem;">
+            Manage user identity, test Google Sheets integration, check Anthropic Claude API connectivity, and review active business rules.
+          </p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+          <!-- Left Column -->
+          <div>
+            <!-- Profile Settings -->
+            <div class="glass-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <div class="stat-icon indigo" style="width:36px;height:36px;"><i data-lucide="user"></i></div>
+                  <div>
+                    <h3>User Profile Information</h3>
+                    <p>Local user account details</p>
+                  </div>
+                </div>
+              </div>
+
+              <form id="profile-form">
+                <div class="form-group">
+                  <label class="form-label" for="settings-fullName">Full Name</label>
+                  <input type="text" id="settings-fullName" class="form-control" value="Rahul Sharma" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="settings-email">Email Address</label>
+                  <input type="email" id="settings-email" class="form-control" value="demo@finai.bank" required>
+                </div>
+
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem;">
+                  <button type="button" class="btn btn-outline btn-sm" onclick="logoutUser()">
+                    <i data-lucide="log-out"></i> Log Out
+                  </button>
+                  <button type="submit" class="btn btn-primary btn-sm">
+                    <i data-lucide="save"></i> Save Changes
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Business Underwriting Rules -->
+            <div class="glass-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <div class="stat-icon green" style="width:36px;height:36px;"><i data-lucide="shield-check"></i></div>
+                  <div>
+                    <h3>Active Underwriting Rules</h3>
+                    <p>Configurable BFSI business logic</p>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:0.75rem;font-size:0.9rem;">
+                <div style="display:flex;justify-content:space-between;padding:0.75rem;background:var(--navy-50);border-radius:var(--radius-sm);">
+                  <span class="font-semibold">Minimum Monthly Salary:</span>
+                  <span class="font-bold" style="color:var(--secondary-indigo);">₹30,000</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:0.75rem;background:var(--navy-50);border-radius:var(--radius-sm);">
+                  <span class="font-semibold">Minimum Credit Score (CIBIL):</span>
+                  <span class="font-bold" style="color:var(--secondary-indigo);">700 points</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:0.75rem;background:var(--navy-50);border-radius:var(--radius-sm);">
+                  <span class="font-semibold">Max Existing EMI Obligations:</span>
+                  <span class="font-bold" style="color:var(--secondary-indigo);">₹20,000 / month</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:0.75rem;background:var(--navy-50);border-radius:var(--radius-sm);">
+                  <span class="font-semibold">Eligible Age Range:</span>
+                  <span class="font-bold" style="color:var(--secondary-indigo);">21 to 65 years</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:0.75rem;background:var(--navy-50);border-radius:var(--radius-sm);">
+                  <span class="font-semibold">Indicative Limit Formula:</span>
+                  <span class="font-bold" style="color:var(--color-success);">Monthly Salary × 20</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div>
+            <!-- Google Sheets Integration -->
+            <div class="glass-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <div class="stat-icon cyan" style="width:36px;height:36px;"><i data-lucide="sheet"></i></div>
+                  <div>
+                    <h3>Google Sheets Integration</h3>
+                    <p>Cloud synchronization of application records</p>
+                  </div>
+                </div>
+                <span id="sheets-status-badge" class="badge badge-neutral">Local Mode</span>
+              </div>
+
+              <p class="text-sm" id="sheets-status-text" style="color:var(--navy-700);margin-bottom:1rem;">
+                Checking Google Sheets integration status...
+              </p>
+
+              <div style="background:var(--navy-50);border:1px solid var(--navy-200);border-radius:var(--radius-md);padding:1rem;margin-bottom:1.25rem;font-size:0.82rem;color:var(--navy-600);">
+                <strong>How to configure:</strong>
+                <ol style="margin-top:0.4rem;padding-left:1.2rem;line-height:1.6;">
+                  <li>Open <code>FINAI/.env</code> in your workspace.</li>
+                  <li>Set <code>GOOGLE_SHEETS_WEBHOOK_URL</code> to your deployed Apps Script web app URL, or provide <code>GOOGLE_SHEETS_SPREADSHEET_ID</code>, <code>GOOGLE_SERVICE_ACCOUNT_EMAIL</code>, and <code>GOOGLE_PRIVATE_KEY</code>.</li>
+                  <li>Restart the server. All evaluations will automatically append as rows!</li>
+                </ol>
+              </div>
+
+              <button type="button" class="btn btn-secondary btn-sm" id="btn-test-sheets">
+                <i data-lucide="plug"></i> Test Connection
+              </button>
+            </div>
+
+            <!-- AI Integration (Gemini / Groq / Claude) -->
+            <div class="glass-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <div class="stat-icon amber" style="width:36px;height:36px;"><i data-lucide="cpu"></i></div>
+                  <div>
+                    <h3>AI Financial Model Integration</h3>
+                    <p>Google Gemini (Free), Groq (Free), or Anthropic Claude</p>
+                  </div>
+                </div>
+                <span id="claude-status-badge" class="badge badge-neutral">Checking...</span>
+              </div>
+
+              <p class="text-sm" id="claude-status-text" style="color:var(--navy-700);margin-bottom:1rem;">
+                Checking AI status...
+              </p>
+
+              <div style="background:var(--navy-50);border:1px solid var(--navy-200);border-radius:var(--radius-md);padding:1rem;font-size:0.82rem;color:var(--navy-600);">
+                <strong>How to get a 100% Free AI API Key:</strong>
+                <ol style="margin-top:0.4rem;padding-left:1.2rem;line-height:1.6;">
+                  <li><strong>Google Gemini (Recommended - 100% Free)</strong>: Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--secondary-indigo);font-weight:600;">aistudio.google.com/app/apikey</a>, sign in with your Google account, and click <em>Create API Key</em>.</li>
+                  <li>Paste it into <code>FINAI/.env</code> as: <br><code>GEMINI_API_KEY=AIzaSy...</code></li>
+                  <li><strong>Alternative Free Option (Groq)</strong>: Go to <a href="https://console.groq.com/keys" target="_blank" style="color:var(--secondary-indigo);font-weight:600;">console.groq.com/keys</a>, create a free key, and set <code>GROQ_API_KEY=gsk_...</code></li>
+                  <li>Save <code>.env</code> and restart the server!</li>
+                </ol>
+              </div>
+            </div>
+
+            <!-- Reset Demo State -->
+            <div class="glass-card" style="border-color:rgba(239,68,68,0.2);">
+              <h3 style="font-size:1.1rem;color:var(--color-danger);margin-bottom:0.4rem;">
+                Reset Demo Data
+              </h3>
+              <p class="text-xs text-muted" style="margin-bottom:1rem;">
+                Clears cached eligibility assessments and chat history from your browser session.
+              </p>
+              <button type="button" class="btn btn-danger btn-sm" id="btn-reset-demo" style="background:var(--color-danger);color:#FFF;">
+                <i data-lucide="rotate-ccw"></i> Reset Local Session
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>
