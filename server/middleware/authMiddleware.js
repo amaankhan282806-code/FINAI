@@ -52,6 +52,15 @@ function requireAuth(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, config.JWT_SECRET);
+    if (decoded.id === 'usr_demo_finai') {
+      req.user = {
+        id: 'usr_demo_finai',
+        fullName: decoded.fullName || 'Rahul Sharma',
+        email: decoded.email || 'demo@finai.bank',
+        isGuest: false
+      };
+      return next();
+    }
     const user = storageService.findUserById(decoded.id);
     if (!user) {
       return res.status(401).json({ success: false, error: 'User account not found.' });

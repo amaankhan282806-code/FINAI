@@ -4,11 +4,11 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index.js"
+      "destination": "/api"
     },
     {
       "source": "/api",
-      "destination": "/api/index.js"
+      "destination": "/api"
     },
     {
       "source": "/dashboard",
@@ -37,6 +37,18 @@
     {
       "source": "/settings",
       "destination": "/settings.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/login.html"
+    },
+    {
+      "source": "/register",
+      "destination": "/register.html"
+    },
+    {
+      "source": "/signup",
+      "destination": "/register.html"
     }
   ]
 }

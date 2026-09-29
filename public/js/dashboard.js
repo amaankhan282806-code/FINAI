@@ -227,6 +227,18 @@ function closeModal(modalId) {
   if (modal) modal.classList.remove('active');
 }
 
+// Client-side authentication guard
+if (typeof window !== 'undefined' && typeof isAuthenticated === 'function' && !isAuthenticated()) {
+  window.location.replace('login.html');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  if (typeof isAuthenticated === 'function' && !isAuthenticated()) {
+    window.location.replace('login.html');
+    return;
+  }
+  if (typeof updateUserDisplay === 'function') {
+    updateUserDisplay();
+  }
   loadDashboardData();
 });

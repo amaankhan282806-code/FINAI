@@ -77,13 +77,19 @@ const pages = [
   'credit-analyzer',
   'ai-assistant',
   'history',
-  'settings'
+  'settings',
+  'login',
+  'register'
 ];
 
 pages.forEach(page => {
   app.get(`/${page}`, (req, res) => {
     res.sendFile(path.join(publicPath, `${page}.html`));
   });
+});
+
+app.get('/signup', (req, res) => {
+  res.sendFile(path.join(publicPath, 'register.html'));
 });
 
 app.get('/', (req, res) => {

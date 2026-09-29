@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account — FINAI Financial Platform</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at 50% 15%, rgba(30, 58, 138, 0.35) 0%, rgba(15, 23, 42, 1) 75%);
+      color: var(--navy-100);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    .auth-page-wrapper {
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 2.5rem 1rem 3.5rem;
+    }
+    .auth-card {
+      margin: auto 0;
+      width: 100%;
+      max-width: 440px;
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 1.25rem;
+      padding: 2.25rem 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65), 0 0 35px rgba(56, 189, 248, 0.12);
+      position: relative;
+      z-index: 10;
+    }
+    .auth-header {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+    .auth-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-family: var(--font-heading);
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-decoration: none;
+      margin-bottom: 0.5rem;
+      transition: transform 0.2s ease;
+    }
+    .auth-brand:hover {
+      transform: scale(1.02);
+    }
+    .auth-brand i {
+      color: var(--accent-cyan);
+      font-size: 1.75rem;
+    }
+    .auth-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0.35rem 0 0.25rem;
+    }
+    .auth-subtitle {
+      font-size: 0.875rem;
+      color: var(--navy-300);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* Form Groups & Inputs */
+    .form-group {
+      margin-bottom: 1.15rem;
+      position: relative;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--navy-200);
+      margin-bottom: 0.35rem;
+      text-align: left;
+    }
+    .input-wrapper {
+      position: relative;
+      width: 100%;
+    }
+    .input-wrapper i.input-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--navy-400);
+      font-size: 0.95rem;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .input-wrapper .form-control {
+      width: 100%;
+      height: 46px;
+      padding-left: 2.75rem;
+      padding-right: 2.75rem;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      border-radius: 0.65rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      position: relative;
+      z-index: 2;
+      pointer-events: auto;
+    }
+    .input-wrapper .form-control:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+    }
+    .input-wrapper .form-control::placeholder {
+      color: rgba(148, 163, 184, 0.65);
+    }
+    .btn-toggle-pwd {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--navy-400);
+      cursor: pointer;
+      padding: 0.35rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+      z-index: 4;
+      pointer-events: auto;
+    }
+    .btn-toggle-pwd:hover {
+      color: #ffffff;
+    }
+    .password-hint {
+      font-size: 0.775rem;
+      color: var(--navy-400);
+      margin-top: 0.35rem;
+      text-align: left;
+    }
+
+    /* Submit Button */
+    .btn-auth-primary {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+      border: none;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 1rem;
+      height: 46px;
+      border-radius: 0.65rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+      margin-top: 1.5rem;
+      position: relative;
+      z-index: 2;
+      pointer-events: auto;
+    }
+    .btn-auth-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--primary-500), var(--accent-cyan));
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+    }
+    .btn-auth-primary:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .auth-footer-links {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.875rem;
+    }
+    .auth-footer-links a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .auth-footer-links a:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    /* Alert Banner */
+    .auth-alert {
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+      display: none;
+      align-items: flex-start;
+      gap: 0.65rem;
+      text-align: left;
+    }
+    .auth-alert-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+    .auth-alert-success {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      color: #86efac;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-page-wrapper">
+    <div class="auth-card">
+      
+      <!-- Brand Header -->
+      <div class="auth-header">
+        <a href="index.html" class="auth-brand">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>FIN<span style="color:var(--accent-cyan);">AI</span></span>
+        </a>
+        <h1 class="auth-title">Create Your Account</h1>
+        <p class="auth-subtitle">Register with your email to start your BFSI underwriting profile</p>
+      </div>
+
+      <!-- In-Page Alert Banner -->
+      <div id="auth-alert-box" class="auth-alert">
+        <i id="auth-alert-icon" class="fa-solid fa-circle-exclamation" style="margin-top:2px;"></i>
+        <div id="auth-alert-msg" style="flex:1;"></div>
+      </div>
+
+      <!-- Registration Form -->
+      <form id="register-form" novalidate autocomplete="on">
+        <!-- Full Name -->
+        <div class="form-group">
+          <label class="form-label" for="reg-fullName">Full Name</label>
+          <div class="input-wrapper">
+            <i class="fa-regular fa-user input-icon"></i>
+            <input type="text" id="reg-fullName" name="fullName" class="form-control" placeholder="e.g. Rahul Sharma" required autocomplete="name" tabindex="1" autofocus>
+          </div>
+        </div>
+
+        <!-- Email Address -->
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Email Address</label>
+          <div class="input-wrapper">
+            <i class="fa-regular fa-envelope input-icon"></i>
+            <input type="email" id="reg-email" name="email" class="form-control" placeholder="user@example.com" required autocomplete="email" tabindex="2">
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Password</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock input-icon"></i>
+            <input type="password" id="reg-password" name="password" class="form-control" placeholder="At least 8 characters" required autocomplete="new-password" tabindex="3">
+            <button type="button" class="btn-toggle-pwd" onclick="togglePasswordVisibility('reg-password', this)" title="Show/Hide Password" tabindex="-1">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+          <div class="password-hint">Must be at least 8 characters long.</div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label class="form-label" for="reg-confirmPassword">Confirm Password</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock input-icon"></i>
+            <input type="password" id="reg-confirmPassword" name="confirmPassword" class="form-control" placeholder="Re-enter your password" required autocomplete="new-password" tabindex="4">
+            <button type="button" class="btn-toggle-pwd" onclick="togglePasswordVisibility('reg-confirmPassword', this)" title="Show/Hide Password" tabindex="-1">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-auth-primary" id="btn-register-submit" tabindex="5">
+          <span id="btn-submit-text">Create Account</span>
+          <i class="fa-solid fa-arrow-right" style="margin-left:0.35rem;"></i>
+        </button>
+      </form>
+
+      <!-- Footer Navigation -->
+      <div class="auth-footer-links">
+        <p style="color:var(--navy-300);margin-bottom:0.75rem;">
+          Already have an account? <a href="login.html" id="link-to-login">Sign In</a>
+        </p>
+        <a href="index.html" style="color:var(--navy-400);font-size:0.825rem;font-weight:400;display:inline-flex;align-items:center;gap:0.35rem;">
+          <i class="fa-solid fa-chevron-left" style="font-size:0.75rem;"></i>
+          <span>Return to Homepage</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Runtime Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    function showAlert(message, type = 'error') {
+      const box = document.getElementById('auth-alert-box');
+      const msg = document.getElementById('auth-alert-msg');
+      const icon = document.getElementById('auth-alert-icon');
+      if (!box || !msg) return;
+      box.className = `auth-alert auth-alert-${type}`;
+      if (icon) {
+        icon.className = type === 'success' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-exclamation';
+      }
+      box.style.display = 'flex';
+      msg.textContent = message;
+    }
+
+    function hideAlert() {
+      const box = document.getElementById('auth-alert-box');
+      if (box) box.style.display = 'none';
+    }
+
+    function togglePasswordVisibility(fieldId, btn) {
+      const input = document.getElementById(fieldId);
+      if (!input || !btn) return;
+      const icon = btn.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) icon.className = 'fa-regular fa-eye-slash';
+      } else {
+        input.type = 'password';
+        if (icon) icon.className = 'fa-regular fa-eye';
+      }
+    }
+
+    // Bridge for alternative ID
+    window.addEventListener('DOMContentLoaded', () => {
+      const altConfirm = document.getElementById('reg-confirm-password');
+      if (altConfirm && !document.getElementById('reg-confirmPassword')) {
+        altConfirm.id = 'reg-confirmPassword';
+      }
+    });
+
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+
+      const fullNameInput = document.getElementById('reg-fullName');
+      const emailInput = document.getElementById('reg-email');
+      const passwordInput = document.getElementById('reg-password');
+      const confirmInput = document.getElementById('reg-confirmPassword') || document.getElementById('reg-confirm-password');
+      const submitBtn = document.getElementById('btn-register-submit');
+
+      const fullName = (fullNameInput ? fullNameInput.value : '').trim();
+      const email = (emailInput ? emailInput.value : '').trim();
+      const password = passwordInput ? passwordInput.value : '';
+      const confirmPassword = confirmInput ? confirmInput.value : '';
+
+      // Frontend validation
+      if (!fullName) {
+        showAlert('Please enter your full name.', 'error');
+        if (fullNameInput) fullNameInput.focus();
+        return;
+      }
+
+      if (!email) {
+        showAlert('Please enter your email address.', 'error');
+        if (emailInput) emailInput.focus();
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showAlert('Please enter a valid email address.', 'error');
+        if (emailInput) emailInput.focus();
+        return;
+      }
+
+      if (password.length < 8) {
+        showAlert('Password must be at least 8 characters long.', 'error');
+        if (passwordInput) passwordInput.focus();
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showAlert('Passwords do not match. Please verify both password fields.', 'error');
+        if (confirmInput) confirmInput.focus();
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating Account...';
+
+      try {
+        const res = await apiRequest(CONFIG.ENDPOINTS.AUTH_REGISTER, {
+          method: 'POST',
+          body: JSON.stringify({
+            fullName,
+            email: email.toLowerCase(),
+            password,
+            confirmPassword
+          })
+        });
+
+        showAlert('Account created successfully! Redirecting to Sign In...', 'success');
+        if (typeof showToast === 'function') {
+          showToast('Account registered! Please sign in with your credentials.', 'success');
+        }
+
+        // Redirect to Login page so user signs in with created credentials
+        setTimeout(() => {
+          window.location.href = `login.html?registered=true&email=${encodeURIComponent(email.toLowerCase())}`;
+        }, 800);
+      } catch (err) {
+        showAlert(err.message || 'Registration failed. Please try again.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Create Account</span> <i class="fa-solid fa-arrow-right" style="margin-left:0.35rem;"></i>';
+      }
+    });
+  </script>
+</body>
+</html>

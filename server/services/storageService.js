@@ -146,10 +146,20 @@ const DEFAULT_APPLICATIONS = [
   }
 ];
 
+const DEFAULT_USERS = [
+  {
+    id: 'usr_demo_finai',
+    fullName: 'Rahul Sharma',
+    email: 'demo@finai.bank',
+    passwordHash: '$2b$10$PNfJ4.1xYOKaR7DQ3EVohejN/BYWirnUJZpTq2VL7HLcX5dzB/YWC',
+    createdAt: '2026-01-01T00:00:00.000Z'
+  }
+];
+
 class StorageService {
   constructor() {
     this.memoryApplications = JSON.parse(JSON.stringify(DEFAULT_APPLICATIONS));
-    this.memoryUsers = [];
+    this.memoryUsers = JSON.parse(JSON.stringify(DEFAULT_USERS));
     this.memoryActivities = [];
     this.dataDir = this.resolveDataDirectory();
     this.dbFile = path.join(this.dataDir, 'local_db.json');
@@ -327,7 +337,7 @@ class StorageService {
       return [...db.applications].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
     return [...db.applications]
-      .filter(app => app.userId === userId || app.userId === 'usr_demo_finai')
+      .filter(app => app.userId === userId)
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 
@@ -366,12 +376,16 @@ class StorageService {
       if (fs.existsSync(this.usersFile)) {
         const content = fs.readFileSync(this.usersFile, 'utf-8');
         const parsed = JSON.parse(content || '[]');
-        if (Array.isArray(parsed)) {
-          this.memoryUsers = parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const hasDemo = parsed.some(u => u.id === 'usr_demo_finai');
+          this.memoryUsers = hasDemo ? parsed : [...DEFAULT_USERS, ...parsed];
         }
       }
     } catch (err) {
       logger.warn('Notice reading users file (serving from memory cache):', err.message);
+    }
+    if (!this.memoryUsers || this.memoryUsers.length === 0) {
+      this.memoryUsers = JSON.parse(JSON.stringify(DEFAULT_USERS));
     }
     return this.memoryUsers;
   }

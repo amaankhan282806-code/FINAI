@@ -35,6 +35,13 @@ module.exports = {
     PRIVATE_KEY: (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n')
   },
 
+  // Google OAuth 2.0 Integration
+  GOOGLE_OAUTH: {
+    CLIENT_ID: process.env.GOOGLE_CLIENT_ID || '',
+    CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || '',
+    REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI || ''
+  },
+
   // Business Rules for Loan Eligibility
   ELIGIBILITY_RULES: {
     MIN_SALARY: 30000,           // ₹30,000 / month

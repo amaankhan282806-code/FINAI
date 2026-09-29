@@ -10,6 +10,15 @@
   <link rel="stylesheet" href="css/responsive.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    (function() {
+      const token = localStorage.getItem('finai_token');
+      const user = localStorage.getItem('finai_user');
+      if (!token || !user) {
+        window.location.replace('login.html');
+      }
+    })();
+  </script>
 </head>
 <body>
   <div class="app-container">
@@ -61,6 +70,11 @@
           <i data-lucide="external-link"></i>
           <span>Landing Page</span>
         </a>
+        <div class="nav-section-title" style="margin-top:1rem;">Account</div>
+        <a href="javascript:void(0)" onclick="logoutUser()" class="nav-link" id="nav-logout-btn" style="color:#ef4444;">
+          <i data-lucide="log-out"></i>
+          <span>Sign Out</span>
+        </a>
       </nav>
 
       <div class="sidebar-footer">
@@ -107,6 +121,11 @@
               <div class="user-meta-role">Fintech User</div>
             </div>
           </div>
+
+          <button id="btn-logout" class="btn btn-outline btn-sm" onclick="logoutUser()" title="Sign Out of FINAI" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 0.85rem;border-color:rgba(239,68,68,0.35);color:#fca5a5;background:rgba(239,68,68,0.08);cursor:pointer;">
+            <i data-lucide="log-out" style="width:14px;height:14px;"></i>
+            <span>Sign Out</span>
+          </button>
         </div>
       </header>
 

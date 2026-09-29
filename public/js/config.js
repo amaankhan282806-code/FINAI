@@ -16,7 +16,12 @@ const CONFIG = {
     AUTH_LOGIN: '/auth/login',
     AUTH_REGISTER: '/auth/register',
     AUTH_DEMO: '/auth/demo',
-    AUTH_ME: '/auth/me'
+    AUTH_ME: '/auth/me',
+    AUTH_GOOGLE_INIT: '/auth/google',
+    AUTH_GOOGLE_TOKEN: '/auth/google/token',
+    AUTH_GOOGLE_STATUS: '/auth/google/status',
+    AUTH_GOOGLE_MOCK: '/auth/google/mock',
+    AUTH_LOGOUT: '/auth/logout'
   },
   STORAGE_KEYS: {
     AUTH_TOKEN: 'finai_token',

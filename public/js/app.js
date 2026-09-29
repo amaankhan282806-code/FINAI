@@ -105,12 +105,11 @@ function getCurrentUser() {
       return null;
     }
   }
-  return {
-    id: 'usr_demo_finai',
-    fullName: 'Rahul Sharma',
-    email: 'demo@finai.bank',
-    isGuest: false
-  };
+  return null;
+}
+
+function isAuthenticated() {
+  return Boolean(getAuthToken() && getCurrentUser());
 }
 
 function setCurrentUser(user, token) {
@@ -120,22 +119,34 @@ function setCurrentUser(user, token) {
 }
 
 function logoutUser() {
+  try {
+    if (CONFIG.ENDPOINTS && CONFIG.ENDPOINTS.AUTH_LOGOUT) {
+      fetch(`${CONFIG.API_BASE_URL}${CONFIG.ENDPOINTS.AUTH_LOGOUT}`, { method: 'POST' }).catch(() => {});
+    }
+  } catch (e) {}
   localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
   localStorage.removeItem(CONFIG.STORAGE_KEYS.USER_DATA);
   showToast('Logged out successfully.', 'info');
-  setTimeout(() => window.location.reload(), 600);
+  window.location.replace('login.html?loggedout=true');
 }
 
 function updateUserDisplay() {
   const user = getCurrentUser();
   const nameEl = document.getElementById('user-display-name');
   const avatarEl = document.getElementById('user-display-avatar');
-  if (nameEl && user) {
-    nameEl.textContent = user.fullName || 'User';
-  }
-  if (avatarEl && user) {
-    const initials = (user.fullName || 'U').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-    avatarEl.textContent = initials || 'FS';
+  const welcomeName = document.getElementById('welcome-name');
+
+  if (user) {
+    if (nameEl) nameEl.textContent = user.fullName || user.email || 'User';
+    if (welcomeName) welcomeName.textContent = (user.fullName || 'User').split(' ')[0];
+    if (avatarEl) {
+      const initials = (user.fullName || 'U').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      avatarEl.textContent = initials || 'FS';
+    }
+  } else {
+    if (nameEl) nameEl.textContent = 'Demo User';
+    if (welcomeName) welcomeName.textContent = 'Guest';
+    if (avatarEl) avatarEl.textContent = 'DU';
   }
 }
 
@@ -157,8 +168,29 @@ async function apiRequest(endpoint, options = {}) {
   };
 
   try {
-    const res = await fetch(`${CONFIG.API_BASE_URL}${endpoint}`, config);
-    const data = await res.json();
+    let res = await fetch(`${CONFIG.API_BASE_URL}${endpoint}`, config);
+    
+    // Dynamic Fallback: If 404 on /api endpoint, attempt direct mount at root
+    if (res.status === 404 && CONFIG.API_BASE_URL.endsWith('/api')) {
+      try {
+        const fallbackUrl = `${window.location.origin}${endpoint}`;
+        const fallbackRes = await fetch(fallbackUrl, config);
+        if (fallbackRes.ok || fallbackRes.status < 500) {
+          res = fallbackRes;
+        }
+      } catch (e) {
+        // retain original response
+      }
+    }
+
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      data = { error: text || `Server returned status ${res.status}` };
+    }
+
     if (!res.ok) {
       throw new Error(data.error || `Server responded with ${res.status}`);
     }
@@ -171,8 +203,10 @@ async function apiRequest(endpoint, options = {}) {
 
 // Mobile Sidebar Logic
 function initSidebar() {
-  const mobileToggle = document.getElementById('mobile-menu-toggle');
   const sidebar = document.getElementById('sidebar');
+  if (!sidebar) return;
+
+  const mobileToggle = document.getElementById('mobile-menu-toggle');
   let overlay = document.getElementById('sidebar-overlay');
 
   if (!overlay) {

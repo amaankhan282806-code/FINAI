@@ -28,6 +28,14 @@ function getApplicationById(req, res, next) {
       });
     }
 
+    // Data isolation: user cannot view another user's record
+    if (req.user && req.user.id !== 'usr_demo_finai' && application.userId && application.userId !== req.user.id && application.userId !== 'usr_demo_finai') {
+      return res.status(403).json({
+        success: false,
+        error: 'You are not authorized to view this application.'
+      });
+    }
+
     res.status(200).json({
       success: true,
       data: application
