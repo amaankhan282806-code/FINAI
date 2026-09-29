@@ -1,0 +1,42 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/api",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/dashboard.html"
+    },
+    {
+      "source": "/eligibility",
+      "destination": "/eligibility.html"
+    },
+    {
+      "source": "/emi-calculator",
+      "destination": "/emi-calculator.html"
+    },
+    {
+      "source": "/credit-analyzer",
+      "destination": "/credit-analyzer.html"
+    },
+    {
+      "source": "/ai-assistant",
+      "destination": "/ai-assistant.html"
+    },
+    {
+      "source": "/history",
+      "destination": "/history.html"
+    },
+    {
+      "source": "/settings",
+      "destination": "/settings.html"
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+# FINAI Data Directory
+# In local development, persistent local JSON files may be stored here.
+# In Vercel serverless environments, writable storage is dynamically routed to /tmp.

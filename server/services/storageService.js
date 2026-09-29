@@ -1,19 +1,70 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { v4: uuidv4 } = require('uuid');
 const logger = require('../utils/logger');
 
-const DATA_DIR = path.join(__dirname, '../../data');
-const DB_FILE = path.join(DATA_DIR, 'local_db.json');
-const USERS_FILE = path.join(DATA_DIR, 'users.json');
-
-// Ensure data folder exists
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-}
-
-// Initial seed data for demo presentation
+// Initial seed data for demo presentation & cold start resilience
 const DEFAULT_APPLICATIONS = [
+  {
+    id: 'APP-2026-9647',
+    userId: 'usr_demo_finai',
+    fullName: 'Vikram Malhotra',
+    status: 'ELIGIBLE',
+    statusLabel: 'Highly Eligible',
+    badgeColor: 'success',
+    isEligible: true,
+    indicativeEligibleAmount: 1600000,
+    requestedLoanAmount: 1600000,
+    monthlySalary: 80000,
+    creditScore: 760,
+    existingEmi: 15000,
+    loanTenureMonths: 60,
+    employmentType: 'Salaried',
+    age: 31,
+    healthScore: 82,
+    availableEmiCapacity: 25000,
+    checks: [
+      {
+        key: 'salary',
+        label: 'Monthly Salary Requirement',
+        passed: true,
+        actual: 80000,
+        required: 30000,
+        message: 'Salary of ₹80,000 meets the minimum requirement of ₹30,000.'
+      },
+      {
+        key: 'creditScore',
+        label: 'Credit Score Threshold',
+        passed: true,
+        actual: 760,
+        required: 700,
+        message: 'Credit score of 760 is healthy (minimum required: 700).'
+      },
+      {
+        key: 'existingEmi',
+        label: 'Existing Debt Obligations',
+        passed: true,
+        actual: 15000,
+        required: 20000,
+        message: 'Existing monthly EMI of ₹15,000 is well within manageable limits (max ₹20,000).'
+      },
+      {
+        key: 'age',
+        label: 'Age Eligibility Criteria',
+        passed: true,
+        actual: 31,
+        required: '21 - 65 years',
+        message: 'Applicant age of 31 meets the eligible working age bracket.'
+      }
+    ],
+    suggestions: [
+      'Your financial profile looks strong! Maintaining low credit card utilization and stable employment will help secure competitive interest rates.'
+    ],
+    evaluatedAt: '2026-09-28T16:47:54.658Z',
+    disclaimer: 'This evaluation provides indicative guidance based on preliminary criteria and does not constitute a guaranteed loan approval or credit commitment from any financial institution.',
+    createdAt: '2026-09-28T16:47:54.659Z'
+  },
   {
     id: 'APP-2026-8941',
     userId: 'usr_demo_finai',
@@ -97,49 +148,185 @@ const DEFAULT_APPLICATIONS = [
 
 class StorageService {
   constructor() {
+    this.memoryApplications = JSON.parse(JSON.stringify(DEFAULT_APPLICATIONS));
+    this.memoryUsers = [];
+    this.memoryActivities = [];
+    this.dataDir = this.resolveDataDirectory();
+    this.dbFile = path.join(this.dataDir, 'local_db.json');
+    this.usersFile = path.join(this.dataDir, 'users.json');
     this.initDb();
   }
 
+  /**
+   * Dynamically resolves the storage directory based on the execution runtime.
+   * On Vercel / AWS Lambda (/var/task read-only), uses the writable /tmp directory.
+   * On local dev, uses local data/ directory if writable, or falls back to os.tmpdir().
+   */
+  resolveDataDirectory() {
+    const isServerless = Boolean(
+      process.env.VERCEL ||
+      process.env.AWS_LAMBDA_FUNCTION_NAME ||
+      process.env.LAMBDA_TASK_ROOT ||
+      process.env.NOW_REGION
+    );
+
+    if (isServerless) {
+      const serverlessDir = path.join(os.tmpdir(), 'finai-data');
+      logger.info(`Serverless environment detected (Vercel/Lambda). Using writable storage path: ${serverlessDir}`);
+      this.ensureDirExists(serverlessDir);
+      return serverlessDir;
+    }
+
+    // Local environment: check if project data directory is accessible and writable
+    const localDir = path.join(__dirname, '../../data');
+    try {
+      this.ensureDirExists(localDir);
+      // Verify writability
+      const testFile = path.join(localDir, `.write_test_${Date.now()}`);
+      fs.writeFileSync(testFile, 'test', 'utf-8');
+      fs.unlinkSync(testFile);
+      return localDir;
+    } catch (err) {
+      logger.warn(`Project data directory is read-only or inaccessible (${err.message}). Falling back to temp directory.`);
+      const fallbackDir = path.join(os.tmpdir(), 'finai-data');
+      this.ensureDirExists(fallbackDir);
+      return fallbackDir;
+    }
+  }
+
+  /**
+   * Safely ensures a directory exists without throwing unhandled exceptions.
+   */
+  ensureDirExists(dir) {
+    try {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      return true;
+    } catch (err) {
+      logger.warn(`Notice: directory creation for ${dir} skipped (${err.message}). Memory store active.`);
+      return false;
+    }
+  }
+
+  /**
+   * Initializes database files and in-memory caches safely.
+   */
   initDb() {
     try {
-      if (!fs.existsSync(DB_FILE)) {
-        fs.writeFileSync(DB_FILE, JSON.stringify({ applications: DEFAULT_APPLICATIONS, activities: [] }, null, 2));
+      // 1. Check if bundled seed data exists in the application root (read-only read is safe)
+      const bundledDbFile = path.join(__dirname, '../../data/local_db.json');
+      if (fs.existsSync(bundledDbFile)) {
+        try {
+          const raw = fs.readFileSync(bundledDbFile, 'utf-8');
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.applications) && parsed.applications.length > 0) {
+            this.memoryApplications = parsed.applications;
+          }
+          if (parsed && Array.isArray(parsed.activities)) {
+            this.memoryActivities = parsed.activities;
+          }
+        } catch (e) {
+          // Bundled file was empty or unparseable, default seed already loaded
+        }
       }
-      if (!fs.existsSync(USERS_FILE)) {
-        fs.writeFileSync(USERS_FILE, JSON.stringify([], null, 2));
+
+      // 2. If the active writable DB file already exists, load its content
+      if (fs.existsSync(this.dbFile)) {
+        try {
+          const content = fs.readFileSync(this.dbFile, 'utf-8');
+          const data = JSON.parse(content || '{}');
+          if (data && Array.isArray(data.applications)) {
+            this.memoryApplications = data.applications;
+          }
+          if (data && Array.isArray(data.activities)) {
+            this.memoryActivities = data.activities;
+          }
+        } catch (err) {
+          logger.warn('Failed reading existing db file, using memory data:', err.message);
+        }
+      } else {
+        // Write initial data to writable storage
+        this.writeDb({
+          applications: this.memoryApplications,
+          activities: this.memoryActivities
+        });
+      }
+
+      // 3. Load users
+      const bundledUsersFile = path.join(__dirname, '../../data/users.json');
+      if (fs.existsSync(bundledUsersFile)) {
+        try {
+          const rawUsers = fs.readFileSync(bundledUsersFile, 'utf-8');
+          const parsedUsers = JSON.parse(rawUsers);
+          if (Array.isArray(parsedUsers)) {
+            this.memoryUsers = parsedUsers;
+          }
+        } catch (e) {}
+      }
+
+      if (fs.existsSync(this.usersFile)) {
+        try {
+          const content = fs.readFileSync(this.usersFile, 'utf-8');
+          const parsed = JSON.parse(content || '[]');
+          if (Array.isArray(parsed)) {
+            this.memoryUsers = parsed;
+          }
+        } catch (err) {
+          logger.warn('Failed reading existing users file, using memory data:', err.message);
+        }
+      } else {
+        this.writeUsers(this.memoryUsers);
       }
     } catch (err) {
-      logger.error('Failed to initialize local JSON database:', err.message);
+      logger.error('Failed to initialize local JSON database (continuing with in-memory store):', err.message);
     }
   }
 
   readDb() {
     try {
-      if (!fs.existsSync(DB_FILE)) this.initDb();
-      const content = fs.readFileSync(DB_FILE, 'utf-8');
-      return JSON.parse(content || '{"applications":[],"activities":[]}');
+      if (fs.existsSync(this.dbFile)) {
+        const content = fs.readFileSync(this.dbFile, 'utf-8');
+        const parsed = JSON.parse(content || '{}');
+        if (parsed && Array.isArray(parsed.applications)) {
+          this.memoryApplications = parsed.applications;
+        }
+        if (parsed && Array.isArray(parsed.activities)) {
+          this.memoryActivities = parsed.activities;
+        }
+      }
     } catch (err) {
-      logger.error('Error reading local db:', err.message);
-      return { applications: [], activities: [] };
+      logger.warn('Notice reading db file (serving from memory cache):', err.message);
     }
+    return {
+      applications: this.memoryApplications,
+      activities: this.memoryActivities
+    };
   }
 
   writeDb(data) {
+    if (data && Array.isArray(data.applications)) {
+      this.memoryApplications = data.applications;
+    }
+    if (data && Array.isArray(data.activities)) {
+      this.memoryActivities = data.activities;
+    }
     try {
-      fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+      this.ensureDirExists(this.dataDir);
+      fs.writeFileSync(this.dbFile, JSON.stringify(data, null, 2), 'utf-8');
       return true;
     } catch (err) {
-      logger.error('Error writing to local db:', err.message);
-      return false;
+      logger.warn('Notice writing to db file (data safely preserved in memory):', err.message);
+      return true;
     }
   }
 
   getApplications(userId = null) {
     const db = this.readDb();
     if (!userId || userId === 'all' || userId === 'usr_demo_finai') {
-      return db.applications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      return [...db.applications].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
-    return db.applications
+    return [...db.applications]
       .filter(app => app.userId === userId || app.userId === 'usr_demo_finai')
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
@@ -176,28 +363,36 @@ class StorageService {
   // Users Storage
   readUsers() {
     try {
-      if (!fs.existsSync(USERS_FILE)) this.initDb();
-      const content = fs.readFileSync(USERS_FILE, 'utf-8');
-      return JSON.parse(content || '[]');
+      if (fs.existsSync(this.usersFile)) {
+        const content = fs.readFileSync(this.usersFile, 'utf-8');
+        const parsed = JSON.parse(content || '[]');
+        if (Array.isArray(parsed)) {
+          this.memoryUsers = parsed;
+        }
+      }
     } catch (err) {
-      logger.error('Error reading users db:', err.message);
-      return [];
+      logger.warn('Notice reading users file (serving from memory cache):', err.message);
     }
+    return this.memoryUsers;
   }
 
   writeUsers(users) {
+    if (Array.isArray(users)) {
+      this.memoryUsers = users;
+    }
     try {
-      fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), 'utf-8');
+      this.ensureDirExists(this.dataDir);
+      fs.writeFileSync(this.usersFile, JSON.stringify(users, null, 2), 'utf-8');
       return true;
     } catch (err) {
-      logger.error('Error writing users db:', err.message);
-      return false;
+      logger.warn('Notice writing users file (data safely preserved in memory):', err.message);
+      return true;
     }
   }
 
   findUserByEmail(email) {
     const users = this.readUsers();
-    return users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    return users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
   }
 
   findUserById(id) {

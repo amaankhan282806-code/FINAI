@@ -22,7 +22,7 @@
  * 6. Click Deploy -> New deployment -> Select type: Web app.
  *    - Execute as: Me
  *    - Who has access: Anyone
- * 7. Copy the Web App URL and paste into your FINAI/.env file:
+ * 7. Copy the Web App URL and paste into your FINAI/.env file or Vercel Environment Variables:
  *    GOOGLE_SHEETS_WEBHOOK_URL=https://script.google.com/macros/s/your_deployment_id/exec
  */
 
@@ -65,6 +65,49 @@ function doPost(e) {
 }
 
 function doGet(e) {
+  var action = (e && e.parameter && e.parameter.action) ? e.parameter.action : "ping";
+
+  if (action === "getApplications" || action === "read") {
+    try {
+      var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Applications");
+      if (!sheet) {
+        sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+      }
+      var rows = sheet.getDataRange().getValues();
+      var data = [];
+      for (var i = 1; i < rows.length; i++) {
+        var row = rows[i];
+        if (row[1]) {
+          data.push({
+            timestamp: row[0],
+            id: row[1],
+            fullName: row[2],
+            employmentType: row[3],
+            monthlySalary: row[4],
+            creditScore: row[5],
+            existingEmi: row[6],
+            desiredLoanAmount: row[7],
+            loanTenureMonths: row[8],
+            indicativeEligibleAmount: row[9],
+            statusLabel: row[10],
+            status: row[10],
+            healthScore: row[11]
+          });
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "success",
+        count: data.length,
+        data: data
+      })).setMimeType(ContentService.MimeType.JSON);
+    } catch (err) {
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "error",
+        message: err.toString()
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+
   return ContentService.createTextOutput(JSON.stringify({
     status: "online",
     service: "FINAI Google Sheets Webhook Sync",
