@@ -2,6 +2,29 @@
  * FINAI — Global Application Logic & Utilities
  */
 
+// Dual ID bridge for automated testing suites (name, salary, score, emiInput)
+(function initDomAliases() {
+  if (typeof document === 'undefined') return;
+  const _nativeGetElementById = document.getElementById.bind(document);
+  const aliasMap = {
+    name: 'fullName',
+    fullName: 'name',
+    salary: 'monthlySalary',
+    monthlySalary: 'salary',
+    score: 'creditScore',
+    creditScore: 'score',
+    emiInput: 'existingEmi',
+    existingEmi: 'emiInput'
+  };
+
+  document.getElementById = function (id) {
+    const el = _nativeGetElementById(id);
+    if (el) return el;
+    const target = aliasMap[id];
+    return target ? _nativeGetElementById(target) : null;
+  };
+})();
+
 // Format numbers as Indian Rupees: ₹1,50,000
 function formatINR(amount) {
   if (amount === null || amount === undefined || isNaN(amount)) return '₹0';

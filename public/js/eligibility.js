@@ -174,13 +174,17 @@ function renderResults(result) {
 
   let statusClass = 'status-eligible';
   let badgeType = 'badge-success';
-  if (result.status === 'NEEDS_IMPROVEMENT' || result.status === 'INELIGIBLE') {
+  if (result.status === 'REJECTED' || result.status === 'INELIGIBLE' || !result.isEligible) {
     statusClass = 'status-ineligible';
     badgeType = 'badge-danger';
   } else if (result.status === 'CONDITIONAL') {
     statusClass = 'status-conditional';
     badgeType = 'badge-warning';
   }
+
+  const eligibleAmount = result.isEligible
+    ? (result.eligibleLoanAmount !== undefined ? result.eligibleLoanAmount : result.indicativeEligibleAmount)
+    : 0;
 
   // Criteria checks items
   const checksHtml = (result.checks || []).map(c => `
@@ -193,10 +197,23 @@ function renderResults(result) {
         <div class="criteria-desc">${c.message}</div>
       </div>
       <div class="badge ${c.passed ? 'badge-success' : 'badge-danger'}">
-        ${c.passed ? 'PASSED' : 'NOT MET'}
+        ${c.passed ? 'PASSED' : 'REJECTED'}
       </div>
     </div>
   `).join('');
+
+  // Rejection banner if rejected
+  const rejectionBannerHtml = !result.isEligible ? `
+    <div style="background:#FEF2F2;border:1px solid #FCA5A5;border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.5rem;color:#991B1B;">
+      <div style="font-weight:700;font-size:1rem;display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
+        <i data-lucide="alert-octagon" style="width:20px;height:20px;color:#DC2626;"></i>
+        Loan Application Status: Rejected
+      </div>
+      <div style="font-size:0.92rem;line-height:1.5;">
+        ${result.rejectionReason || 'One or more eligibility criteria were not met. Review the detailed breakdown below.'}
+      </div>
+    </div>
+  ` : '';
 
   // Suggestions items
   const suggestionsHtml = (result.suggestions || []).map(s => `
@@ -210,27 +227,29 @@ function renderResults(result) {
       <div class="result-header">
         <div>
           <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.4rem;">
-            <span class="badge ${badgeType}">${result.statusLabel || result.status}</span>
+            <span class="badge ${badgeType}">${result.statusLabel || (result.isEligible ? 'Eligible' : 'Rejected')}</span>
             <span class="text-xs text-muted">Reference: ${result.id || 'FINAI-EVAL'}</span>
           </div>
-          <h2 style="font-size:1.75rem;color:var(--primary-navy);">Evaluation for ${result.fullName}</h2>
+          <h2 style="font-size:1.75rem;color:var(--primary-navy);">Evaluation for ${result.fullName || result.name || 'Applicant'}</h2>
           <p class="text-sm text-muted">Evaluated on ${formatDate(result.evaluatedAt || new Date().toISOString())}</p>
         </div>
 
         <div class="result-score-circle">
-          <div class="result-score-number">${result.healthScore || 85}</div>
+          <div class="result-score-number">${result.healthScore || (result.isEligible ? 85 : 45)}</div>
           <div class="result-score-label">Health Score</div>
         </div>
       </div>
+
+      ${rejectionBannerHtml}
 
       <!-- Financial Metrics Summary Cards -->
       <div class="stats-grid" style="margin-bottom:1.75rem;">
         <div class="stat-card">
           <div class="stat-header">
-            <span class="stat-label">Indicative Eligible Limit</span>
-            <div class="stat-icon green"><i data-lucide="shield-check"></i></div>
+            <span class="stat-label">Eligible Loan Amount</span>
+            <div class="stat-icon ${result.isEligible ? 'green' : 'amber'}"><i data-lucide="shield-check"></i></div>
           </div>
-          <div class="stat-value" style="color:var(--color-success);">${formatINR(result.indicativeEligibleAmount)}</div>
+          <div class="stat-value" style="color:${result.isEligible ? 'var(--color-success)' : 'var(--color-danger)'};">${formatINR(eligibleAmount)}</div>
           <div class="text-xs text-muted" style="margin-top:0.35rem;">Formula: Monthly Salary × 20</div>
         </div>
 

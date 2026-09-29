@@ -1,5 +1,6 @@
 /**
- * FINAI Automated Financial Calculation & Business Logic Tests
+ * FINAI Comprehensive Financial Logic & Business Rule Automated Test Suite
+ * Fully verifies Milestone 3 Specifications and Test Cases
  */
 
 const assert = require('assert');
@@ -19,156 +20,310 @@ function runTest(name, fn) {
   }
 }
 
-console.log('\n=============================================');
-console.log('  RUNNING FINAI AUTOMATED UNIT & RULE TESTS  ');
-console.log('=============================================\n');
+console.log('\n=============================================================');
+console.log('   FINAI FINANCIAL AUDIT: UNIT & BUSINESS LOGIC TEST SUITE   ');
+console.log('=============================================================\n');
 
-// 1. EMI CALCULATOR TESTS
-console.log('--- 1. EMI Calculations ---');
+// -----------------------------------------------------------------------------
+// SECTION 1: LOAN ELIGIBILITY CHECKER TESTS (Milestone 3, Activity 3.1)
+// -----------------------------------------------------------------------------
+console.log('--- 1. Loan Eligibility Checker (Activity 3.1 Test Cases) ---');
 
-runTest('Standard Loan EMI calculation (₹1,00,000 at 12% for 12 months)', () => {
-  const result = calculateEMI(100000, 12, 12);
-  // Expected EMI for 100k at 1% per month for 12 months is ~ ₹8,885
-  assert.strictEqual(result.monthlyEmi, 8885);
-  assert.ok(result.totalInterest > 0);
-  assert.strictEqual(result.principal, 100000);
-  assert.strictEqual(result.totalRepayment, result.monthlyEmi * 12);
-  assert.strictEqual(result.yearlySchedule.length, 1);
-});
-
-runTest('Zero Interest Loan EMI calculation (₹60,000 at 0% for 6 months)', () => {
-  const result = calculateEMI(60000, 0, 6);
-  assert.strictEqual(result.monthlyEmi, 10000);
-  assert.strictEqual(result.totalInterest, 0);
-  assert.strictEqual(result.totalRepayment, 60000);
-});
-
-runTest('EMI Amortization balances decrement to 0', () => {
-  const result = calculateEMI(500000, 10.5, 24);
-  assert.ok(result.monthlyEmi > 0);
-  assert.strictEqual(result.monthlyScheduleSample.length, 24);
-  const lastInstallment = result.monthlyScheduleSample[23];
-  assert.strictEqual(lastInstallment.remainingBalance, 0);
-});
-
-runTest('Invalid EMI inputs throw appropriate error', () => {
-  assert.throws(() => {
-    calculateEMI(-10000, 10, 12);
-  }, /must be positive numbers/);
-});
-
-// 2. LOAN ELIGIBILITY RULES TESTS
-console.log('\n--- 2. Loan Eligibility Rules & Business Logic ---');
-
-runTest('Candidate with ₹75,000 salary, 780 score, low EMI passes with High Eligibility', () => {
+// Test 1: Salary ₹50,000, 780 score, ₹5,000 EMI, 25 age -> Eligible
+runTest('Test 1: ₹50,000 salary, 780 score, ₹5,000 EMI, age 25 -> Eligible (Limit: ₹10,00,000)', () => {
   const result = evaluateEligibility({
-    fullName: 'Arjun Mehta',
-    age: 28,
-    monthlySalary: 75000,
+    fullName: 'Test Candidate 1',
+    age: 25,
+    monthlySalary: 50000,
     creditScore: 780,
-    existingEmi: 8000,
-    desiredLoanAmount: 1000000,
-    loanTenureMonths: 60
+    existingEmi: 5000
   });
-
-  assert.strictEqual(result.status, 'ELIGIBLE');
   assert.strictEqual(result.isEligible, true);
-  // Indicative amount should be salary * 20 = 15,00,000
-  assert.strictEqual(result.indicativeEligibleAmount, 1500000);
-  assert.ok(result.healthScore >= 80);
-  assert.strictEqual(result.checks.every(c => c.passed), true);
+  assert.strictEqual(result.status, 'ELIGIBLE');
+  assert.strictEqual(result.eligibleLoanAmount, 1000000); // 50000 * 20
+  assert.strictEqual(result.indicativeEligibleAmount, 1000000);
 });
 
-runTest('Salary below ₹30,000 fails eligibility requirement', () => {
+// Test 2: Salary ₹30,000, 780 score, ₹5,000 EMI, 25 age -> Rejected (must be > 30,000)
+runTest('Test 2 (Boundary): ₹30,000 salary, 780 score, ₹5,000 EMI, age 25 -> Rejected (Must be > ₹30,000)', () => {
   const result = evaluateEligibility({
-    fullName: 'Suresh Kumar',
-    age: 24,
-    monthlySalary: 25000, // Below 30,000
-    creditScore: 750,
-    existingEmi: 5000,
-    desiredLoanAmount: 400000
+    fullName: 'Test Candidate 2',
+    age: 25,
+    monthlySalary: 30000,
+    creditScore: 780,
+    existingEmi: 5000
   });
-
   assert.strictEqual(result.isEligible, false);
+  assert.strictEqual(result.status, 'REJECTED');
+  assert.strictEqual(result.eligibleLoanAmount, 0);
   const salaryCheck = result.checks.find(c => c.key === 'salary');
   assert.strictEqual(salaryCheck.passed, false);
-  assert.ok(result.suggestions.some(s => s.includes('30,000')));
 });
 
-runTest('Credit score below 700 fails credit score rule', () => {
+// Test 3: Salary ₹30,001, 700 score, ₹5,000 EMI, 25 age -> Rejected (must be > 700)
+runTest('Test 3 (Boundary): ₹30,001 salary, 700 score, ₹5,000 EMI, age 25 -> Rejected (Must be > 700 score)', () => {
   const result = evaluateEligibility({
-    fullName: 'Deepak Roy',
-    age: 32,
-    monthlySalary: 55000,
-    creditScore: 680, // Below 700
-    existingEmi: 6000,
-    desiredLoanAmount: 500000
+    fullName: 'Test Candidate 3',
+    age: 25,
+    monthlySalary: 30001,
+    creditScore: 700,
+    existingEmi: 5000
   });
-
   assert.strictEqual(result.isEligible, false);
+  assert.strictEqual(result.status, 'REJECTED');
+  assert.strictEqual(result.eligibleLoanAmount, 0);
   const creditCheck = result.checks.find(c => c.key === 'creditScore');
   assert.strictEqual(creditCheck.passed, false);
-  assert.ok(result.suggestions.some(s => s.includes('credit score above 700')));
 });
 
-runTest('Existing EMI above ₹20,000 fails debt obligations rule', () => {
+// Test 4: Salary ₹50,000, 750 score, ₹20,000 EMI, 25 age -> Rejected (must be < 20,000)
+runTest('Test 4 (Boundary): ₹50,000 salary, 750 score, ₹20,000 EMI, age 25 -> Rejected (Must be < ₹20,000 EMI)', () => {
   const result = evaluateEligibility({
-    fullName: 'Neha Gupta',
-    age: 30,
-    monthlySalary: 60000,
-    creditScore: 760,
-    existingEmi: 25000, // Above 20,000
-    desiredLoanAmount: 500000
+    fullName: 'Test Candidate 4',
+    age: 25,
+    monthlySalary: 50000,
+    creditScore: 750,
+    existingEmi: 20000
   });
-
   assert.strictEqual(result.isEligible, false);
+  assert.strictEqual(result.status, 'REJECTED');
+  assert.strictEqual(result.eligibleLoanAmount, 0);
   const emiCheck = result.checks.find(c => c.key === 'existingEmi');
   assert.strictEqual(emiCheck.passed, false);
 });
 
-runTest('Applicant age below 21 fails age requirement', () => {
+// Test 5: Salary ₹50,000, 780 score, ₹5,000 EMI, 20 age -> Rejected (must be >= 21)
+runTest('Test 5 (Boundary): ₹50,000 salary, 780 score, ₹5,000 EMI, age 20 -> Rejected (Age < 21)', () => {
   const result = evaluateEligibility({
-    fullName: 'Rohit Student',
-    age: 19, // Below 21
-    monthlySalary: 40000,
-    creditScore: 730,
-    existingEmi: 2000,
-    desiredLoanAmount: 200000
+    fullName: 'Test Candidate 5',
+    age: 20,
+    monthlySalary: 50000,
+    creditScore: 780,
+    existingEmi: 5000
   });
-
   assert.strictEqual(result.isEligible, false);
+  assert.strictEqual(result.status, 'REJECTED');
   const ageCheck = result.checks.find(c => c.key === 'age');
   assert.strictEqual(ageCheck.passed, false);
 });
 
-// 3. CREDIT SCORE ANALYZER TESTS
-console.log('\n--- 3. Credit Score Analysis & Rating Matrix ---');
-
-runTest('Credit score 820 is categorized as Excellent with prime benefits', () => {
-  const analysis = analyzeCreditScore({ creditScore: 820, creditUtilization: 15 });
-  assert.strictEqual(analysis.category, 'Excellent');
-  assert.strictEqual(analysis.badgeColor, 'success');
-  assert.strictEqual(analysis.approvalProbability, 'Very High');
+// Test 6: Salary ₹75,000, 820 score, ₹10,000 EMI, 30 age -> Eligible (Limit: ₹15,00,000)
+runTest('Test 6: ₹75,000 salary, 820 score, ₹10,000 EMI, age 30 -> Eligible (Limit: ₹15,00,000)', () => {
+  const result = evaluateEligibility({
+    fullName: 'Test Candidate 6',
+    age: 30,
+    monthlySalary: 75000,
+    creditScore: 820,
+    existingEmi: 10000
+  });
+  assert.strictEqual(result.isEligible, true);
+  assert.strictEqual(result.status, 'ELIGIBLE');
+  assert.strictEqual(result.eligibleLoanAmount, 1500000);
 });
 
-runTest('Credit score 550 is categorized as Poor / High Risk', () => {
-  const analysis = analyzeCreditScore({ creditScore: 550, creditUtilization: 65 });
-  assert.strictEqual(analysis.category, 'Poor');
-  assert.strictEqual(analysis.badgeColor, 'danger');
-  assert.strictEqual(analysis.approvalProbability, 'Low');
+// Test 7: Salary ₹0, 780 score, ₹0 EMI, 25 age -> Rejected
+runTest('Test 7: ₹0 salary, 780 score, ₹0 EMI, age 25 -> Rejected', () => {
+  const result = evaluateEligibility({
+    fullName: 'Test Candidate 7',
+    age: 25,
+    monthlySalary: 0,
+    creditScore: 780,
+    existingEmi: 0
+  });
+  assert.strictEqual(result.isEligible, false);
+  assert.strictEqual(result.status, 'REJECTED');
 });
 
-runTest('High credit utilization (>30%) produces warning recommendation', () => {
-  const analysis = analyzeCreditScore({ creditScore: 720, creditUtilization: 60 });
-  const utilFactor = analysis.factors.find(f => f.name.includes('Utilization'));
-  assert.strictEqual(utilFactor.status, 'High Risk');
-  assert.ok(utilFactor.recommendation.includes('under 30%'));
+// Test 8: Salary ₹50,000, 900 score, ₹5,000 EMI, 21 age -> Eligible (Age exactly 21)
+runTest('Test 8 (Boundary): ₹50,000 salary, 900 score, ₹5,000 EMI, age 21 -> Eligible (Boundary age: 21)', () => {
+  const result = evaluateEligibility({
+    fullName: 'Test Candidate 8',
+    age: 21,
+    monthlySalary: 50000,
+    creditScore: 900,
+    existingEmi: 5000
+  });
+  assert.strictEqual(result.isEligible, true);
+  assert.strictEqual(result.status, 'ELIGIBLE');
+  assert.strictEqual(result.eligibleLoanAmount, 1000000);
 });
 
-// Test Summary
-console.log('\n=============================================');
-console.log(`  TEST RESULTS: ${passedTests} PASSED, ${failedTests} FAILED  `);
-console.log('=============================================\n');
+// Alternate field alias testing (name, salary, score, emiInput)
+runTest('Field Aliases: accepts name, salary, score, emiInput seamlessly', () => {
+  const result = evaluateEligibility({
+    name: 'Pooja Verma',
+    age: 26,
+    salary: 60000,
+    score: 760,
+    emiInput: 8000
+  });
+  assert.strictEqual(result.isEligible, true);
+  assert.strictEqual(result.fullName, 'Pooja Verma');
+  assert.strictEqual(result.eligibleLoanAmount, 1200000);
+});
+
+// Multiple failed conditions check
+runTest('Multiple Failed Conditions: reports all failed criteria reasons', () => {
+  const result = evaluateEligibility({
+    fullName: 'Multi Fail Candidate',
+    age: 19,
+    monthlySalary: 20000,
+    creditScore: 620,
+    existingEmi: 28000
+  });
+  assert.strictEqual(result.isEligible, false);
+  assert.strictEqual(result.checks.filter(c => !c.passed).length, 4);
+  assert.ok(result.rejectionReasons.length === 4);
+});
+
+// -----------------------------------------------------------------------------
+// SECTION 2: CREDIT SCORE ANALYZER TESTS (Milestone 3, Activity 3.2)
+// -----------------------------------------------------------------------------
+console.log('\n--- 2. Credit Score Analyzer (Activity 3.2 Test Cases) ---');
+
+// Specific points required by prompt: 300, 400, 649, 650, 700, 749, 750, 800, 900
+runTest('Score 300 -> Poor', () => {
+  const res = analyzeCreditScore({ creditScore: 300 });
+  assert.strictEqual(res.category, 'Poor');
+  assert.strictEqual(res.badgeColor, 'danger');
+  assert.strictEqual(res.approvalProbability, 'Low');
+});
+
+runTest('Score 400 -> Poor', () => {
+  const res = analyzeCreditScore({ creditScore: 400 });
+  assert.strictEqual(res.category, 'Poor');
+  assert.strictEqual(res.badgeColor, 'danger');
+});
+
+runTest('Score 649 (Boundary) -> Poor', () => {
+  const res = analyzeCreditScore({ creditScore: 649 });
+  assert.strictEqual(res.category, 'Poor');
+  assert.strictEqual(res.badgeColor, 'danger');
+});
+
+runTest('Score 650 (Boundary) -> Good', () => {
+  const res = analyzeCreditScore({ creditScore: 650 });
+  assert.strictEqual(res.category, 'Good');
+  assert.strictEqual(res.badgeColor, 'info');
+});
+
+runTest('Score 700 -> Good', () => {
+  const res = analyzeCreditScore({ creditScore: 700 });
+  assert.strictEqual(res.category, 'Good');
+  assert.strictEqual(res.badgeColor, 'info');
+});
+
+runTest('Score 749 (Boundary) -> Good', () => {
+  const res = analyzeCreditScore({ creditScore: 749 });
+  assert.strictEqual(res.category, 'Good');
+  assert.strictEqual(res.badgeColor, 'info');
+});
+
+runTest('Score 750 (Boundary) -> Excellent', () => {
+  const res = analyzeCreditScore({ creditScore: 750 });
+  assert.strictEqual(res.category, 'Excellent');
+  assert.strictEqual(res.badgeColor, 'success');
+  assert.strictEqual(res.approvalProbability, 'Very High');
+});
+
+runTest('Score 800 -> Excellent', () => {
+  const res = analyzeCreditScore({ creditScore: 800 });
+  assert.strictEqual(res.category, 'Excellent');
+  assert.strictEqual(res.badgeColor, 'success');
+});
+
+runTest('Score 900 -> Excellent', () => {
+  const res = analyzeCreditScore({ creditScore: 900 });
+  assert.strictEqual(res.category, 'Excellent');
+  assert.strictEqual(res.badgeColor, 'success');
+});
+
+// Error handling tests
+runTest('Invalid Input Validation: empty score throws error', () => {
+  assert.throws(() => analyzeCreditScore({ creditScore: null }), /Credit score is required/);
+});
+
+runTest('Invalid Input Validation: negative score throws error', () => {
+  assert.throws(() => analyzeCreditScore({ creditScore: -50 }), /between 300 and 900/);
+});
+
+runTest('Invalid Input Validation: score > 900 throws error', () => {
+  assert.throws(() => analyzeCreditScore({ creditScore: 950 }), /between 300 and 900/);
+});
+
+runTest('Invalid Input Validation: non-numeric string throws error', () => {
+  assert.throws(() => analyzeCreditScore({ creditScore: 'invalid' }), /valid number/);
+});
+
+// -----------------------------------------------------------------------------
+// SECTION 3: EMI CALCULATOR TESTS (Milestone 3, Activity 3.3)
+// -----------------------------------------------------------------------------
+console.log('\n--- 3. EMI Calculator (Activity 3.3 Test Cases) ---');
+
+// Test 1: ₹5,00,000, 10%, 5 years (60 months) -> ₹10,624
+runTest('Test 1: ₹5,00,000 at 10% for 5 years (60 mo) -> EMI ₹10,624', () => {
+  const res = calculateEMI(500000, 10, 60);
+  assert.strictEqual(res.monthlyEmi, 10624);
+  assert.strictEqual(res.totalRepayment, 10624 * 60);
+  assert.strictEqual(res.totalInterest, res.totalRepayment - 500000);
+});
+
+// Test 2: ₹10,00,000, 8.5%, 10 years (120 months) -> ₹12,399
+runTest('Test 2: ₹10,00,000 at 8.5% for 10 years (120 mo) -> EMI ₹12,399', () => {
+  const res = calculateEMI(1000000, 8.5, 120);
+  assert.strictEqual(res.monthlyEmi, 12399);
+  assert.strictEqual(res.totalRepayment, 12399 * 120);
+});
+
+// Test 3: ₹2,00,000, 0%, 2 years (24 months) -> ₹8,333 (Zero-interest test)
+runTest('Test 3 (Zero Interest): ₹2,00,000 at 0% for 2 years (24 mo) -> EMI ₹8,333, Interest ₹0', () => {
+  const res = calculateEMI(200000, 0, 24);
+  assert.strictEqual(res.monthlyEmi, 8333);
+  assert.strictEqual(res.totalInterest, 0);
+  assert.strictEqual(res.totalRepayment, 200000);
+});
+
+// Test 4: ₹15,00,000, 12%, 15 years (180 months) -> ₹18,003
+runTest('Test 4: ₹15,00,000 at 12% for 15 years (180 mo) -> EMI ₹18,003', () => {
+  const res = calculateEMI(1500000, 12, 180);
+  assert.strictEqual(res.monthlyEmi, 18003);
+  assert.strictEqual(res.totalRepayment, 18003 * 180);
+});
+
+// Test 5: ₹1,00,000, 18%, 1 year (12 months) -> ₹9,168
+runTest('Test 5: ₹1,00,000 at 18% for 1 year (12 mo) -> EMI ₹9,168', () => {
+  const res = calculateEMI(100000, 18, 12);
+  assert.strictEqual(res.monthlyEmi, 9168);
+  assert.strictEqual(res.totalRepayment, 9168 * 12);
+});
+
+// Amortization schedule balances decrement to 0
+runTest('Amortization Schedule: balances decrement to exactly 0 at loan maturity', () => {
+  const res = calculateEMI(500000, 10.5, 24);
+  assert.strictEqual(res.monthlyScheduleSample.length, 24);
+  const lastInstallment = res.monthlyScheduleSample[23];
+  assert.strictEqual(lastInstallment.remainingBalance, 0);
+});
+
+// Invalid inputs throw errors
+runTest('EMI Validation: negative principal throws error', () => {
+  assert.throws(() => calculateEMI(-100000, 10, 12), /positive numbers/);
+});
+
+runTest('EMI Validation: negative interest rate throws error', () => {
+  assert.throws(() => calculateEMI(100000, -5, 12), /0 or a positive number/);
+});
+
+runTest('EMI Validation: zero tenure throws error', () => {
+  assert.throws(() => calculateEMI(100000, 10, 0), /positive numbers/);
+});
+
+// -----------------------------------------------------------------------------
+// SUMMARY
+// -----------------------------------------------------------------------------
+console.log('\n=============================================================');
+console.log(`  FINAI FINANCIAL AUDIT: ${passedTests} PASSED, ${failedTests} FAILED  `);
+console.log('=============================================================\n');
 
 if (failedTests > 0) {
   process.exit(1);

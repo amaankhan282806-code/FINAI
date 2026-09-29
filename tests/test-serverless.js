@@ -176,7 +176,7 @@ async function runServerlessTests() {
       });
       assert.strictEqual(res.status, 200);
       assert.strictEqual(res.body.success, true);
-      assert.strictEqual(res.body.data.category, 'Very Good');
+      assert.strictEqual(res.body.data.category, 'Excellent');
     });
 
     await itAsync('GET /api/applications returns seeded application history', async () => {

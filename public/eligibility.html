@@ -138,12 +138,12 @@
               <!-- Full Name -->
               <div class="form-group">
                 <label class="form-label" for="fullName">
-                  <span>Full Legal Name</span>
+                  <span>Applicant Name</span>
                   <span class="helper">As per PAN / Aadhaar</span>
                 </label>
                 <div class="input-wrapper">
                   <div class="input-icon"><i data-lucide="user"></i></div>
-                  <input type="text" id="fullName" class="form-control has-icon" value="Rahul Sharma" placeholder="e.g. Rahul Sharma" required>
+                  <input type="text" id="fullName" name="name" data-id="name" class="form-control has-icon" value="Rahul Sharma" placeholder="e.g. Rahul Sharma" required>
                 </div>
               </div>
 
@@ -155,14 +155,14 @@
                 </label>
                 <div class="input-wrapper">
                   <div class="input-icon"><i data-lucide="calendar"></i></div>
-                  <input type="number" id="age" class="form-control has-icon" value="29" min="18" max="99" required>
+                  <input type="number" id="age" name="age" data-id="age" class="form-control has-icon" value="29" min="18" max="99" required>
                 </div>
               </div>
 
               <!-- Employment Type -->
               <div class="form-group">
                 <label class="form-label" for="employmentType">Employment Type</label>
-                <select id="employmentType" class="form-control form-select">
+                <select id="employmentType" name="employmentType" class="form-control form-select">
                   <option value="Salaried" selected>Salaried (Full-time)</option>
                   <option value="Self-Employed">Self-Employed Professional / Business</option>
                   <option value="Contractual">Contractual / Freelance</option>
@@ -173,17 +173,17 @@
               <!-- Monthly Salary -->
               <div class="form-group">
                 <label class="form-label" for="monthlySalary">
-                  <span>Net Monthly Salary</span>
+                  <span>Monthly Salary</span>
                   <span class="helper">Rule: > ₹30,000</span>
                 </label>
                 <div class="input-wrapper">
                   <div class="input-prefix">₹</div>
-                  <input type="number" id="monthlySalary" class="form-control has-prefix" value="75000" min="5000" step="1000" required>
+                  <input type="number" id="monthlySalary" name="salary" data-id="salary" class="form-control has-prefix" value="75000" min="0" step="1000" required>
                 </div>
                 <div class="slider-group">
-                  <input type="range" id="salaryRange" class="range-slider" min="15000" max="300000" step="2500" value="75000">
+                  <input type="range" id="salaryRange" class="range-slider" min="0" max="300000" step="2500" value="75000">
                   <div class="slider-labels">
-                    <span>₹15,000</span>
+                    <span>₹0</span>
                     <span>₹1,50,000</span>
                     <span>₹3,00,000+</span>
                   </div>
@@ -198,7 +198,7 @@
                 </label>
                 <div class="input-wrapper">
                   <div class="input-icon"><i data-lucide="gauge"></i></div>
-                  <input type="number" id="creditScore" class="form-control has-icon" value="780" min="300" max="900" required>
+                  <input type="number" id="creditScore" name="score" data-id="score" class="form-control has-icon" value="780" min="300" max="900" required>
                 </div>
                 <div class="slider-group">
                   <input type="range" id="creditScoreRange" class="range-slider" min="300" max="900" step="5" value="780">
@@ -218,13 +218,13 @@
                 </label>
                 <div class="input-wrapper">
                   <div class="input-prefix">₹</div>
-                  <input type="number" id="existingEmi" class="form-control has-prefix" value="12000" min="0" step="500" required>
+                  <input type="number" id="existingEmi" name="emiInput" data-id="emiInput" class="form-control has-prefix" value="12000" min="0" step="500" required>
                 </div>
                 <div class="slider-group">
                   <input type="range" id="existingEmiRange" class="range-slider" min="0" max="60000" step="1000" value="12000">
                   <div class="slider-labels">
                     <span>₹0 (Debt Free)</span>
-                    <span>₹20,000 (Max Recommended)</span>
+                    <span>₹20,000 (Max Limit)</span>
                     <span>₹60,000</span>
                   </div>
                 </div>
