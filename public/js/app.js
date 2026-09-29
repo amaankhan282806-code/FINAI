@@ -118,16 +118,88 @@ function setCurrentUser(user, token) {
   updateUserDisplay();
 }
 
-function logoutUser() {
+let isLoggingOut = false;
+
+async function logoutUser(e) {
+  if (e && typeof e.preventDefault === 'function') {
+    e.preventDefault();
+  }
+  if (e && typeof e.stopPropagation === 'function') {
+    e.stopPropagation();
+  }
+
+  // Prevent duplicate concurrent logout executions
+  if (isLoggingOut) return;
+  isLoggingOut = true;
+
+  // Immediate visual feedback: disable logout buttons and show progress
+  const logoutButtons = [
+    document.getElementById('btn-logout'),
+    document.getElementById('nav-logout-btn')
+  ].filter(Boolean);
+
+  logoutButtons.forEach(btn => {
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+    btn.style.pointerEvents = 'none';
+  });
+
+  const btnLogoutText = document.querySelector('#btn-logout span');
+  if (btnLogoutText) {
+    btnLogoutText.textContent = 'Signing Out...';
+  }
+
+  const token = getAuthToken();
+
+  // Call the backend logout API endpoint with proper token & timeout
   try {
-    if (CONFIG.ENDPOINTS && CONFIG.ENDPOINTS.AUTH_LOGOUT) {
-      fetch(`${CONFIG.API_BASE_URL}${CONFIG.ENDPOINTS.AUTH_LOGOUT}`, { method: 'POST' }).catch(() => {});
+    const logoutUrl = (typeof CONFIG !== 'undefined' && CONFIG.API_BASE_URL && CONFIG.ENDPOINTS && CONFIG.ENDPOINTS.AUTH_LOGOUT)
+      ? `${CONFIG.API_BASE_URL}${CONFIG.ENDPOINTS.AUTH_LOGOUT}`
+      : '/api/auth/logout';
+
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
-  } catch (e) {}
-  localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
-  localStorage.removeItem(CONFIG.STORAGE_KEYS.USER_DATA);
-  showToast('Logged out successfully.', 'info');
-  window.location.replace('login.html?loggedout=true');
+
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 2000) : null;
+
+    await fetch(logoutUrl, {
+      method: 'POST',
+      headers,
+      signal: controller ? controller.signal : undefined,
+      keepalive: true
+    }).catch(err => {
+      console.warn('Backend logout request failed or timed out:', err.message);
+    });
+
+    if (timeoutId) clearTimeout(timeoutId);
+  } catch (err) {
+    console.warn('Network issue during logout:', err.message);
+  }
+
+  // Clear all client-side authentication tokens, session data & cached profile
+  try {
+    if (typeof CONFIG !== 'undefined' && CONFIG.STORAGE_KEYS) {
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.USER_DATA);
+    }
+    localStorage.removeItem('finai_token');
+    localStorage.removeItem('finai_user');
+    sessionStorage.clear();
+  } catch (err) {
+    console.error('Error clearing local storage on logout:', err);
+  }
+
+  // Ensure current user state is purged
+  if (typeof updateUserDisplay === 'function') {
+    updateUserDisplay();
+  }
+
+  // Redirect to login page with loggedout query parameter
+  // Use /login?loggedout=true which routes properly locally and on Vercel cleanUrls
+  window.location.replace('/login?loggedout=true');
 }
 
 function updateUserDisplay() {
@@ -258,10 +330,22 @@ async function checkSystemHealth() {
   }
 }
 
+function initLogoutButtons() {
+  const btnLogout = document.getElementById('btn-logout');
+  if (btnLogout) {
+    btnLogout.addEventListener('click', (e) => logoutUser(e));
+  }
+  const navLogout = document.getElementById('nav-logout-btn');
+  if (navLogout) {
+    navLogout.addEventListener('click', (e) => logoutUser(e));
+  }
+}
+
 // Initializer on DOM Ready
 document.addEventListener('DOMContentLoaded', () => {
   updateUserDisplay();
   initSidebar();
+  initLogoutButtons();
   if (window.lucide) {
     lucide.createIcons();
   }

@@ -470,7 +470,7 @@
     });
 
     // Handle URL parameters (registered success or logged out messages)
-    window.addEventListener('DOMContentLoaded', () => {
+    function checkUrlParams() {
       const urlParams = new URLSearchParams(window.location.search);
       const registered = urlParams.get('registered');
       const loggedout = urlParams.get('loggedout');
@@ -489,7 +489,13 @@
       if (loggedout === 'true') {
         showAlert('You have been logged out safely.', 'info');
       }
-    });
+    }
+
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', checkUrlParams);
+    } else {
+      checkUrlParams();
+    }
   </script>
 </body>
 </html>

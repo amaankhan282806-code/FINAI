@@ -2,6 +2,18 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const storageService = require('../services/storageService');
 
+const revokedTokens = new Set();
+
+function revokeToken(token) {
+  if (token && typeof token === 'string') {
+    revokedTokens.add(token);
+  }
+}
+
+function isTokenRevoked(token) {
+  return revokedTokens.has(token);
+}
+
 function extractToken(req) {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -13,7 +25,7 @@ function extractToken(req) {
 // Optional Auth (Supports guest mode seamlessly)
 function optionalAuth(req, res, next) {
   const token = extractToken(req);
-  if (!token) {
+  if (!token || isTokenRevoked(token)) {
     req.user = {
       id: 'usr_demo_finai',
       fullName: 'Rahul Sharma',
@@ -43,7 +55,7 @@ function optionalAuth(req, res, next) {
 // Strict Auth for protected actions
 function requireAuth(req, res, next) {
   const token = extractToken(req);
-  if (!token) {
+  if (!token || isTokenRevoked(token)) {
     return res.status(401).json({
       success: false,
       error: 'Authentication required. Please sign in.'
@@ -77,5 +89,7 @@ function requireAuth(req, res, next) {
 
 module.exports = {
   optionalAuth,
-  requireAuth
+  requireAuth,
+  revokeToken,
+  isTokenRevoked
 };

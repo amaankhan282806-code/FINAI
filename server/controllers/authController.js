@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const storageService = require('../services/storageService');
 const googleAuthService = require('../services/googleAuthService');
+const authMiddleware = require('../middleware/authMiddleware');
 
 function generateToken(user) {
   return jwt.sign(
@@ -134,6 +135,13 @@ function getMe(req, res) {
 }
 
 function logout(req, res) {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    if (authMiddleware.revokeToken) {
+      authMiddleware.revokeToken(token);
+    }
+  }
   res.status(200).json({
     success: true,
     message: 'Logged out successfully.'

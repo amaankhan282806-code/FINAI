@@ -84,8 +84,16 @@ const pages = [
 
 pages.forEach(page => {
   app.get(`/${page}`, (req, res) => {
+    if (page === 'dashboard') {
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    }
     res.sendFile(path.join(publicPath, `${page}.html`));
   });
+});
+
+app.get('/dashboard.html', (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.sendFile(path.join(publicPath, 'dashboard.html'));
 });
 
 app.get('/signup', (req, res) => {

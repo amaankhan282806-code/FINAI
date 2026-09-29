@@ -203,8 +203,8 @@ async function runBrowserWorkflow() {
     console.log(`  User in localStorage after logout: ${userInStorage}`);
     await captureScreenshot('22_logged_out_redirect.png');
 
-    if (!currentUrlAfterLogout.includes('login.html')) {
-      throw new Error(`Expected redirect to login.html after logout, got: ${currentUrlAfterLogout}`);
+    if (!currentUrlAfterLogout.includes('/login') && !currentUrlAfterLogout.includes('login.html')) {
+      throw new Error(`Expected redirect to /login after logout, got: ${currentUrlAfterLogout}`);
     }
     if (tokenInStorage !== null) {
       throw new Error('Token was not cleared from localStorage after logout!');
